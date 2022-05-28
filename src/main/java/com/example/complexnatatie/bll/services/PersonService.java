@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,17 +16,12 @@ public class PersonService {
     private final PersonRepository personRepository;
 
     public List<PersonDTO> getAll() {
-        return personRepository
-                .findAll()
-                .stream()
-                .map(p -> PersonDTO.builder()
-                        .id(p.getId())
-                        .firstName(p.getFirstName())
-                        .lastName(p.getLastName())
-                        .email(p.getEmail())
-                        .phone(p.getPhone())
-                        .build()
-                )
-                .collect(Collectors.toList());
+        return PersonDTO.fromPersons(personRepository.findAll());
+    }
+
+    public List<PersonDTO> getByName(String name) {
+        final String newName = name.toLowerCase().replace("%20", " ");
+
+        return PersonDTO.fromPersons(personRepository.getByName(newName));
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -20,6 +21,11 @@ public class PersonController {
     @GetMapping
     public ResponseEntity<List<PersonDTO>> getAll() {
         return new ResponseEntity<>(personService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<PersonDTO>> getByName(@RequestParam String name) {
+        return new ResponseEntity<>(personService.getByName(name), HttpStatus.OK);
     }
 
 }
