@@ -1,5 +1,6 @@
 package com.example.complexnatatie.dao.models;
 
+import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Getter
 public class Person {
     @Id
     @GeneratedValue(generator = "UUID")
