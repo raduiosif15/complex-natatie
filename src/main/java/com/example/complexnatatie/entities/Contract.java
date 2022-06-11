@@ -17,11 +17,14 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "created_date", nullable = false)
-    private Date createdDate;
+    @Column(name = "number", nullable = false)
+    private int number;
 
-    @Column(name = "expiration_date", nullable = false)
-    private Date expirationDate;
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private Date endDate;
 
     @Column(name = "customer_id", nullable = false)
     private int customerId;

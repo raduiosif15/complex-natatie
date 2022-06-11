@@ -25,11 +25,11 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
     }
 
     // todo:
-    // search client's active contract (if any)
+    // search customer's active contract (if any)
     // if true : return error message for creating a new one
     // else: calculate total, display it and after confirmation create contract
 
-    // calculate total by contract role/rank
+    // calculate total by contract customerType
 
     public ContractAvailabilityResponse checkIfOtherContractExists(int customerId) {
         final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
@@ -38,7 +38,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
             return new ContractAvailabilityResponse(true, null);
         }
 
-        final Date firstContractExpirationDate = contracts.get(0).getExpirationDate();
+        final Date firstContractExpirationDate = contracts.get(0).getEndDate();
         final Date date = new Date();
 
         if (firstContractExpirationDate.after(date)) {
@@ -58,16 +58,15 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         }
 
         Contract contract = ContractBuilder.fromDTO(contractDTO);
-        // set date
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
 
         calendar.setTime(date);
-        contract.setCreatedDate(calendar.getTime());
+        contract.setStartDate(calendar.getTime());
 
         calendar.add(Calendar.YEAR, 1);
         calendar.add(Calendar.DATE, -1);
-        contract.setExpirationDate(calendar.getTime());
+        contract.setEndDate(calendar.getTime());
 
         contract = contractRepository.save(contract);
         return ContractBuilder.fromEntity(contract);

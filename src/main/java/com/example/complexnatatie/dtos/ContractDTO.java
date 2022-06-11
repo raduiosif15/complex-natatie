@@ -13,9 +13,11 @@ public class ContractDTO {
 
     private int id;
 
-    private Date createdDate;
+    private int number;
 
-    private Date expirationDate;
+    private Date startDate;
+
+    private Date endDate;
 
     private int customerId;
 

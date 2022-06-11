@@ -13,8 +13,9 @@ public class ContractBuilder {
     public static ContractDTO fromEntity(Contract contract) {
         return ContractDTO.builder()
                 .id(contract.getId())
-                .createdDate(contract.getCreatedDate())
-                .expirationDate(contract.getExpirationDate())
+                .number(contract.getNumber())
+                .startDate(contract.getStartDate())
+                .endDate(contract.getEndDate())
                 .customerId(contract.getCustomerId())
                 .build();
     }
@@ -26,8 +27,9 @@ public class ContractBuilder {
     public static Contract fromDTO(ContractDTO contractDTO) {
         return Contract.builder()
                 .id(contractDTO.getId())
-                .createdDate(contractDTO.getCreatedDate())
-                .expirationDate(contractDTO.getExpirationDate())
+                .number(contractDTO.getNumber())
+                .startDate(contractDTO.getStartDate())
+                .endDate(contractDTO.getEndDate())
                 .customerId(contractDTO.getCustomerId())
                 .build();
     }
