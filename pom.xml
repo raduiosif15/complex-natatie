@@ -74,6 +74,7 @@
                 <version>3.0.3</version>
                 <configuration>
                     <appName>complex-natatie</appName>
+                    <jdkVersion>17</jdkVersion>
                 </configuration>
             </plugin>
         </plugins>
