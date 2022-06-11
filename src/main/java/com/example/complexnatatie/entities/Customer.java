@@ -1,6 +1,5 @@
 package com.example.complexnatatie.entities;
 
-import com.example.complexnatatie.dtos.CustomerDTO;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -15,6 +14,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -45,13 +45,4 @@ public class Customer {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Contract> contracts;
 
-    public static Customer fromCustomerDTO(CustomerDTO customerDTO) {
-        return Customer.builder()
-                .firstName(customerDTO.getFirstName())
-                .lastName(customerDTO.getLastName())
-                .email(customerDTO.getEmail())
-                .phone(customerDTO.getPhone())
-                .cnp(customerDTO.getCnp())
-                .build();
-    }
 }

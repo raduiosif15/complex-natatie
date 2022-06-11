@@ -1,10 +1,12 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.repositories.ContractRepository;
 import com.example.complexnatatie.repositories.CustomerRepository;
+import com.example.complexnatatie.services.responses.ContractAvailabilityResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,14 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 
     public List<ContractDTO> getAll() {
-        return ContractDTO.fromContracts(contractRepository.findAll());
+        return ContractBuilder.fromEntities(contractRepository.findAll());
     }
 
     // todo:
@@ -30,35 +31,33 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
 
     // calculate total by contract role/rank
 
-    public Optional<Object> checkIfOtherContractExists(int customerId) {
+    public ContractAvailabilityResponse checkIfOtherContractExists(int customerId) {
         final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
 
-        System.out.println(contracts);
-
         if (contracts.isEmpty()) {
-            return Optional.empty();
+            return new ContractAvailabilityResponse(true, null);
         }
 
         final Date firstContractExpirationDate = contracts.get(0).getExpirationDate();
         final Date date = new Date();
 
         if (firstContractExpirationDate.after(date)) {
-            return Optional.of(firstContractExpirationDate);
+            return new ContractAvailabilityResponse(false, firstContractExpirationDate);
         }
 
-        return Optional.empty();
+        return new ContractAvailabilityResponse(true, null);
     }
 
     public ContractDTO create(ContractDTO contractDTO) {
         final int customerId = contractDTO.getCustomerId();
-        final Optional<Object> checkAvailability = checkIfOtherContractExists(customerId);
+        final ContractAvailabilityResponse checkAvailability = checkIfOtherContractExists(customerId);
 
-        if (checkAvailability.isPresent()) {
+        if (!checkAvailability.isAvailable()) {
             LOGGER.error("Customer with id: {} already have an active contract.", customerId);
             throw new ContractException("Customer with id: " + customerId + " already have an active contract", HttpStatus.CONFLICT);
         }
 
-        Contract contract = Contract.fromContractDTO(contractDTO);
+        Contract contract = ContractBuilder.fromDTO(contractDTO);
         // set date
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
@@ -71,7 +70,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         contract.setExpirationDate(calendar.getTime());
 
         contract = contractRepository.save(contract);
-        return ContractDTO.fromContract(contract);
+        return ContractBuilder.fromEntity(contract);
     }
 
 }
