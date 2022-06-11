@@ -41,16 +41,10 @@ public record CustomerService(CustomerRepository customerRepository) {
         }
 
         Customer customer = optionalCustomer.get();
-
-        final String phone = customerDTO.getPhone();
-        if (phone != null && !phone.isEmpty()) {
-            customer.setPhone(phone);
-        }
-
-        final String email = customerDTO.getEmail();
-        if (email != null && !email.isEmpty()) {
-            customer.setEmail(email);
-        }
+        customer.setPhone(customerDTO.getPhone());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setUtcnID(customerDTO.getUtcnID());
+        customer.setCustomerType(customerDTO.getCustomerType().getName());
 
         customerRepository.save(customer);
 

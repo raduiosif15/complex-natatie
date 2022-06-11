@@ -1,6 +1,7 @@
 package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.dtos.TaxDTO;
+import com.example.complexnatatie.entities.CustomerType;
 import com.example.complexnatatie.entities.Tax;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,7 @@ public class TaxBuilder {
         return TaxDTO.builder()
                 .id(tax.getId())
                 .description(tax.getDescription())
-                .taxType(tax.getTaxType())
+                .taxType(new CustomerType(tax.getTaxType()))
                 .taxValue(tax.getTaxValue())
                 .build();
     }
@@ -25,7 +26,7 @@ public class TaxBuilder {
     public static Tax fromDTO(TaxDTO taxDTO) {
         return Tax.builder()
                 .description(taxDTO.getDescription())
-                .taxType(taxDTO.getTaxType())
+                .taxType(taxDTO.getTaxType().getName())
                 .taxValue(taxDTO.getTaxValue())
                 .build();
     }

@@ -16,11 +16,11 @@ public class Tax {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "tax_type", nullable = false)
-    private CustomerType taxType;
+    private String taxType;
 
     @Column(name = "tax_value", nullable = false)
     private int taxValue;

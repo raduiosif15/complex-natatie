@@ -1,5 +1,6 @@
 package com.example.complexnatatie.dtos;
 
+import com.example.complexnatatie.entities.CustomerType;
 import lombok.*;
 
 @NoArgsConstructor
@@ -7,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 public class CustomerDTO {
 
     private int id;
@@ -20,5 +22,9 @@ public class CustomerDTO {
     private String phone;
 
     private String cnp;
+
+    private String utcnID;
+
+    private CustomerType customerType;
 
 }

@@ -29,15 +29,16 @@ public class CustomerController {
 
     @PostMapping(value = "/add")
     public ResponseEntity<CustomerDTO> add(@RequestBody CustomerDTO customerDTO) {
+        System.out.println("customer dto: " + customerDTO);
         return new ResponseEntity<>(customerService.save(customerDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/update/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<CustomerDTO> update(@PathVariable int id, @RequestBody CustomerDTO customerDTO) {
         return new ResponseEntity<>(customerService.update(id, customerDTO), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<CustomerDTO> delete(@PathVariable int id) {
         return new ResponseEntity<>(customerService.delete(id), HttpStatus.OK);
     }
