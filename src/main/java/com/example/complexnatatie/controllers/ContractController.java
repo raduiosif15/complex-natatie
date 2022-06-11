@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -22,9 +25,13 @@ public class ContractController {
         return new ResponseEntity<>(contractService.getAll(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/create")
-    public ResponseEntity<ContractDTO> create(@RequestBody ContractDTO contractDTO) {
-        return new ResponseEntity<>(contractService.create(contractDTO), HttpStatus.OK);
+    @GetMapping(value = "/check-availability/{clientId}")
+    public ResponseEntity<Optional<Object>> checkIfOtherContractExists(@PathVariable UUID clientId) {
+        return new ResponseEntity<>(contractService.checkIfOtherContractExists(clientId), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/create")
+    public ResponseEntity<ContractDTO> create(@RequestBody ContractDTO contractDTO) {
+        return new ResponseEntity<>(contractService.create(contractDTO), HttpStatus.CREATED);
+    }
 }

@@ -1,12 +1,13 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.PersonDTO;
 import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.repositories.ContractRepository;
 import com.example.complexnatatie.repositories.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,8 +27,10 @@ public record ContractService(ContractRepository contractRepository, PersonRepos
 
     // calculate total by contract role/rank
 
-    public Optional<Date> checkIfOtherContractExists(UUID clientId) {
+    public Optional<Object> checkIfOtherContractExists(UUID clientId) {
         final List<Contract> contracts = contractRepository.getContractsByClientId(clientId);
+
+        System.out.println(contracts);
 
         if (contracts.isEmpty()) {
             return Optional.empty();
@@ -36,8 +39,7 @@ public record ContractService(ContractRepository contractRepository, PersonRepos
         final Date firstContractExpirationDate = contracts.get(0).getExpirationDate();
         final Date date = new Date();
 
-
-        if (firstContractExpirationDate.before(date)) {
+        if (firstContractExpirationDate.after(date)) {
             return Optional.of(firstContractExpirationDate);
         }
 
@@ -45,11 +47,15 @@ public record ContractService(ContractRepository contractRepository, PersonRepos
     }
 
     public ContractDTO create(ContractDTO contractDTO) {
-        // todo:
         final UUID clientId = contractDTO.getClientId();
+        final Optional<Object> checkAvailability = checkIfOtherContractExists(clientId);
+
+        if (checkAvailability.isPresent()) {
+            LOGGER.error("Person with id: {} already have an active contract.", clientId);
+            throw new ContractException("Person with id: " + clientId + " already have an active contract", HttpStatus.CONFLICT);
+        }
 
         Contract contract = Contract.fromContractDTO(contractDTO);
-
         // set date
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
