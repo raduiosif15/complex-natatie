@@ -1,16 +1,10 @@
 package com.example.complexnatatie.entities;
 
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.PersonDTO;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -21,9 +15,8 @@ import java.util.UUID;
 @Builder
 public class Contract {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
@@ -31,10 +24,8 @@ public class Contract {
     @Column(name = "expiration_date", nullable = false)
     private Date expirationDate;
 
-    @Column(name = "client_id", nullable = false)
-    private UUID clientId;
-
-    // todo: add cashier id
+    @Column(name = "customer_id", nullable = false)
+    private int customerId;
 
     // todo: create a builder class instead
     public static Contract fromContractDTO(ContractDTO contractDTO) {
@@ -42,7 +33,7 @@ public class Contract {
                 .id(contractDTO.getId())
                 .createdDate(contractDTO.getCreatedDate())
                 .expirationDate(contractDTO.getExpirationDate())
-                .clientId(contractDTO.getClientId())
+                .customerId(contractDTO.getCustomerId())
                 .build();
     }
 

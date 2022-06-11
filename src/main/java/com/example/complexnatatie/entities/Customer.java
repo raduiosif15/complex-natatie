@@ -1,14 +1,12 @@
 package com.example.complexnatatie.entities;
 
-import com.example.complexnatatie.dtos.PersonDTO;
+import com.example.complexnatatie.dtos.CustomerDTO;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -16,11 +14,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class Person {
+public class Customer {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -37,21 +34,24 @@ public class Person {
     @Column(name = "cnp")
     private String cnp;
 
+    @Column(name = "utcn_id")
+    private String utcnID;
 
-    // todo: 1. move this to client
-    // todo: 2. create cashier list with ended contracts
+    @Column(name = "customer_type")
+    private CustomerType customerType;
+
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Contract> contracts;
 
-    public static Person fromPersonDTO(PersonDTO personDTO) {
-        return Person.builder()
-                .firstName(personDTO.getFirstName())
-                .lastName(personDTO.getLastName())
-                .email(personDTO.getEmail())
-                .phone(personDTO.getPhone())
-                .cnp(personDTO.getCnp())
+    public static Customer fromCustomerDTO(CustomerDTO customerDTO) {
+        return Customer.builder()
+                .firstName(customerDTO.getFirstName())
+                .lastName(customerDTO.getLastName())
+                .email(customerDTO.getEmail())
+                .phone(customerDTO.getPhone())
+                .cnp(customerDTO.getCnp())
                 .build();
     }
 }

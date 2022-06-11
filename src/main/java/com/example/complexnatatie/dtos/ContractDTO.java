@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -16,20 +15,20 @@ import java.util.stream.Collectors;
 @Builder
 public class ContractDTO {
 
-    private UUID id;
+    private int id;
 
     private Date createdDate;
 
     private Date expirationDate;
 
-    private UUID clientId;
+    private int customerId;
 
     public static ContractDTO fromContract(Contract contract) {
         return ContractDTO.builder()
                 .id(contract.getId())
                 .createdDate(contract.getCreatedDate())
                 .expirationDate(contract.getExpirationDate())
-                .clientId(contract.getClientId())
+                .customerId(contract.getCustomerId())
                 .build();
     }
 

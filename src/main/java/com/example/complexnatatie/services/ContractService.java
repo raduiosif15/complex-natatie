@@ -4,16 +4,19 @@ import com.example.complexnatatie.controllers.handlers.exceptions.ContractExcept
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.repositories.ContractRepository;
-import com.example.complexnatatie.repositories.PersonRepository;
+import com.example.complexnatatie.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public record ContractService(ContractRepository contractRepository, PersonRepository personRepository) {
+public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 
     public List<ContractDTO> getAll() {
@@ -27,8 +30,8 @@ public record ContractService(ContractRepository contractRepository, PersonRepos
 
     // calculate total by contract role/rank
 
-    public Optional<Object> checkIfOtherContractExists(UUID clientId) {
-        final List<Contract> contracts = contractRepository.getContractsByClientId(clientId);
+    public Optional<Object> checkIfOtherContractExists(int customerId) {
+        final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
 
         System.out.println(contracts);
 
@@ -47,12 +50,12 @@ public record ContractService(ContractRepository contractRepository, PersonRepos
     }
 
     public ContractDTO create(ContractDTO contractDTO) {
-        final UUID clientId = contractDTO.getClientId();
-        final Optional<Object> checkAvailability = checkIfOtherContractExists(clientId);
+        final int customerId = contractDTO.getCustomerId();
+        final Optional<Object> checkAvailability = checkIfOtherContractExists(customerId);
 
         if (checkAvailability.isPresent()) {
-            LOGGER.error("Person with id: {} already have an active contract.", clientId);
-            throw new ContractException("Person with id: " + clientId + " already have an active contract", HttpStatus.CONFLICT);
+            LOGGER.error("Customer with id: {} already have an active contract.", customerId);
+            throw new ContractException("Customer with id: " + customerId + " already have an active contract", HttpStatus.CONFLICT);
         }
 
         Contract contract = Contract.fromContractDTO(contractDTO);

@@ -5,15 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface ContractRepository extends JpaRepository<Contract, UUID> {
+public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
-    @Query(value = "SELECT c " +
-            "FROM Contract c " +
-            "JOIN Person p ON p.id = c.clientId " +
-            "WHERE c.clientId = :clientId " +
-            "ORDER BY c.expirationDate DESC ")
-    List<Contract> getContractsByClientId(UUID clientId);
+    @Query(value = "SELECT contract " +
+            "FROM Contract contract " +
+            "JOIN Customer customer ON customer.id = contract.customerId " +
+            "WHERE contract.customerId = :customerId " +
+            "ORDER BY contract.expirationDate DESC ")
+    List<Contract> getContractsByCustomerId(int customerId);
 
 }
