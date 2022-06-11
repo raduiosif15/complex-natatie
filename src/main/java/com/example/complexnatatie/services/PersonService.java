@@ -42,8 +42,15 @@ public record PersonService(PersonRepository personRepository) {
 
         Person person = optionalPerson.get();
 
-        person.setPhone(personDTO.getPhone());
-        person.setEmail(personDTO.getEmail());
+        final String phone = personDTO.getPhone();
+        if (phone != null && !phone.isEmpty()) {
+            person.setPhone(phone);
+        }
+
+        final String email = personDTO.getEmail();
+        if (email != null && !email.isEmpty()) {
+            person.setEmail(email);
+        }
 
         personRepository.save(person);
 
