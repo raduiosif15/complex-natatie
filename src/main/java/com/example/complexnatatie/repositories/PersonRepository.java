@@ -1,6 +1,6 @@
-package com.example.complexnatatie.dao.repositories;
+package com.example.complexnatatie.repositories;
 
-import com.example.complexnatatie.dao.models.Person;
+import com.example.complexnatatie.entities.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

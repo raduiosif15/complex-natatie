@@ -1,6 +1,6 @@
-package com.example.complexnatatie.bll.dtos;
+package com.example.complexnatatie.dtos;
 
-import com.example.complexnatatie.dao.models.Person;
+import com.example.complexnatatie.entities.Person;
 import lombok.*;
 
 import java.util.List;

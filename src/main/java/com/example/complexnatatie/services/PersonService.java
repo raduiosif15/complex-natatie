@@ -1,13 +1,11 @@
-package com.example.complexnatatie.bll.services;
+package com.example.complexnatatie.services;
 
-import com.example.complexnatatie.bll.dtos.PersonDTO;
-import com.example.complexnatatie.dao.repositories.PersonRepository;
+import com.example.complexnatatie.dtos.PersonDTO;
+import com.example.complexnatatie.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

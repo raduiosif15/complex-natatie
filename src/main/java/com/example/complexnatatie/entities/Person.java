@@ -1,4 +1,4 @@
-package com.example.complexnatatie.dao.models;
+package com.example.complexnatatie.entities;
 
 import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
