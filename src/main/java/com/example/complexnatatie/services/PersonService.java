@@ -26,13 +26,13 @@ public record PersonService(PersonRepository personRepository) {
         return PersonDTO.fromPersons(personRepository.getByName(newName));
     }
 
-    public Person save(PersonDTO personDTO) {
+    public PersonDTO save(PersonDTO personDTO) {
         Person person = Person.fromPersonDTO(personDTO);
         person = personRepository.save(person);
-        return person;
+        return PersonDTO.fromPerson(person);
     }
 
-    public Person update(UUID id, PersonDTO personDTO) {
+    public PersonDTO update(UUID id, PersonDTO personDTO) {
         Optional<Person> optionalPerson = personRepository.findById(id);
 
         if (optionalPerson.isEmpty()) {
@@ -54,10 +54,10 @@ public record PersonService(PersonRepository personRepository) {
 
         personRepository.save(person);
 
-        return person;
+        return PersonDTO.fromPerson(person);
     }
 
-    public Person delete(UUID id) {
+    public PersonDTO delete(UUID id) {
         Optional<Person> optionalPerson = personRepository.findById(id);
 
         if (optionalPerson.isEmpty()) {
