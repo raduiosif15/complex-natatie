@@ -30,17 +30,17 @@ public class PersonController {
     }
 
     @PostMapping(value = "/add")
-    public ResponseEntity<Person> add(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonDTO> add(@RequestBody PersonDTO personDTO) {
         return new ResponseEntity<>(personService.save(personDTO), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/update/{id}")
-    public ResponseEntity<Person> update(@PathVariable UUID id, @RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonDTO> update(@PathVariable UUID id, @RequestBody PersonDTO personDTO) {
         return new ResponseEntity<>(personService.update(id, personDTO), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<Person> delete(@PathVariable UUID id) {
+    public ResponseEntity<PersonDTO> delete(@PathVariable UUID id) {
         return new ResponseEntity<>(personService.delete(id), HttpStatus.OK);
     }
 
