@@ -8,7 +8,6 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 public class ContractDTO {
 

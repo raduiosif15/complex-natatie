@@ -1,4 +1,4 @@
-package com.example.complexnatatie.services.responses;
+package com.example.complexnatatie.controllers.handlers.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

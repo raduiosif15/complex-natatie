@@ -2,11 +2,11 @@ package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
+import com.example.complexnatatie.controllers.handlers.responses.ContractAvailabilityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.repositories.ContractRepository;
 import com.example.complexnatatie.repositories.CustomerRepository;
-import com.example.complexnatatie.services.responses.ContractAvailabilityResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
