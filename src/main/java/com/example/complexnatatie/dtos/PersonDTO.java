@@ -25,6 +25,8 @@ public class PersonDTO {
 
     private String phone;
 
+    private String cnp;
+
     public static PersonDTO fromPerson(Person person) {
         return PersonDTO.builder()
                 .id(person.getId())
@@ -32,11 +34,13 @@ public class PersonDTO {
                 .lastName(person.getLastName())
                 .email(person.getEmail())
                 .phone(person.getPhone())
+                .cnp(person.getCnp())
                 .build();
     }
 
     public static List<PersonDTO> fromPersons(List<Person> persons) {
         return persons.stream().map(PersonDTO::fromPerson).collect(Collectors.toList());
     }
+
 
 }
