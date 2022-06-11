@@ -13,6 +13,6 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
             "FROM Person p " +
             "WHERE LOWER(CONCAT(p.firstName, ' ', p.lastName)) LIKE %:name% " +
             "OR LOWER(CONCAT(p.lastName, ' ', p.firstName)) LIKE %:name% ")
-    public List<Person> getByName(String name);
+    List<Person> getByName(String name);
 
 }
