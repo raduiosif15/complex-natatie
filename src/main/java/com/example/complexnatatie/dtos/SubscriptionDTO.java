@@ -9,11 +9,11 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class ContractDTO {
+public class SubscriptionDTO {
 
     private int id;
 
-    private int number;
+    private boolean valid;
 
     private Date startDate;
 

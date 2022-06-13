@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class Contract {
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,17 @@ public class Contract {
     @Column(name = "number", nullable = false)
     private int number;
 
-    @Column(name = "start_date", nullable = false)
-    private Date startDate;
+    @Column(name = "pay_date", nullable = false)
+    private Date payDate;
 
-    @Column(name = "end_date", nullable = false)
-    private Date endDate;
+    @Column(name = "pay_value", nullable = false)
+    private double payValue;
+
+    @Column(name = "description", nullable = false)
+    private String description;
+
+    @Column(name = "pay_type", nullable = false)
+    private String payType;
 
     @Column(name = "customer_id", nullable = false)
     private int customerId;

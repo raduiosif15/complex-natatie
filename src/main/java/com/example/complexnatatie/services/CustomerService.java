@@ -1,5 +1,6 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
@@ -16,19 +17,19 @@ public record CustomerService(CustomerRepository customerRepository) {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
     public List<CustomerDTO> getAll() {
-        return CustomerDTO.fromCustomers(customerRepository.findAll());
+        return CustomerBuilder.fromEntities(customerRepository.findAll());
     }
 
     public List<CustomerDTO> getByName(String name) {
         final String newName = name.toLowerCase().replace("%20", " ");
 
-        return CustomerDTO.fromCustomers(customerRepository.getByName(newName));
+        return CustomerBuilder.fromEntities(customerRepository.getByName(newName));
     }
 
     public CustomerDTO save(CustomerDTO customerDTO) {
-        Customer customer = Customer.fromCustomerDTO(customerDTO);
+        Customer customer = CustomerBuilder.fromDTO(customerDTO);
         customer = customerRepository.save(customer);
-        return CustomerDTO.fromCustomer(customer);
+        return CustomerBuilder.fromEntity(customer);
     }
 
     public CustomerDTO update(int id, CustomerDTO customerDTO) {
@@ -40,20 +41,13 @@ public record CustomerService(CustomerRepository customerRepository) {
         }
 
         Customer customer = optionalCustomer.get();
-
-        final String phone = customerDTO.getPhone();
-        if (phone != null && !phone.isEmpty()) {
-            customer.setPhone(phone);
-        }
-
-        final String email = customerDTO.getEmail();
-        if (email != null && !email.isEmpty()) {
-            customer.setEmail(email);
-        }
+        customer.setPhone(customerDTO.getPhone());
+        customer.setUtcnID(customerDTO.getUtcnID());
+        customer.setCustomerType(customerDTO.getCustomerType().getName());
 
         customerRepository.save(customer);
 
-        return CustomerDTO.fromCustomer(customer);
+        return CustomerBuilder.fromEntity(customer);
     }
 
     public CustomerDTO delete(int id) {

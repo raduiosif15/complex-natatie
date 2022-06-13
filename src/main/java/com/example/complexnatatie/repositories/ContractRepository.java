@@ -12,7 +12,7 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
             "FROM Contract contract " +
             "JOIN Customer customer ON customer.id = contract.customerId " +
             "WHERE contract.customerId = :customerId " +
-            "ORDER BY contract.expirationDate DESC ")
+            "ORDER BY contract.endDate DESC ")
     List<Contract> getContractsByCustomerId(int customerId);
 
 }

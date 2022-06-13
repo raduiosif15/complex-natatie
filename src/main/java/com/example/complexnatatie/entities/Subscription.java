@@ -11,14 +11,14 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class Contract {
+public class Subscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "number", nullable = false)
-    private int number;
+    @Column(name = "valid", nullable = false)
+    private boolean valid;
 
     @Column(name = "start_date", nullable = false)
     private Date startDate;

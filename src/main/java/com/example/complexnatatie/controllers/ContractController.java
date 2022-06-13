@@ -2,13 +2,13 @@ package com.example.complexnatatie.controllers;
 
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.services.ContractService;
+import com.example.complexnatatie.controllers.handlers.responses.ContractAvailabilityResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -24,7 +24,7 @@ public class ContractController {
     }
 
     @GetMapping(value = "/check-availability/{customerId}")
-    public ResponseEntity<Optional<Object>> checkIfOtherContractExists(@PathVariable int customerId) {
+    public ResponseEntity<ContractAvailabilityResponse> checkIfOtherContractExists(@PathVariable int customerId) {
         return new ResponseEntity<>(contractService.checkIfOtherContractExists(customerId), HttpStatus.OK);
     }
 

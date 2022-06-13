@@ -1,6 +1,5 @@
 package com.example.complexnatatie.entities;
 
-import com.example.complexnatatie.dtos.CustomerDTO;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -15,6 +14,7 @@ import java.util.List;
 @Setter
 @Builder
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -25,33 +25,31 @@ public class Customer {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email")
-    private String email;
-
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "cnp")
+    @Column(name = "cnp", nullable = false)
     private String cnp;
 
     @Column(name = "utcn_id")
     private String utcnID;
 
-    @Column(name = "customer_type")
-    private CustomerType customerType;
+    @Column(name = "customer_type", nullable = false)
+    private String customerType;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Subscription> subscriptions;
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Contract> contracts;
 
-    public static Customer fromCustomerDTO(CustomerDTO customerDTO) {
-        return Customer.builder()
-                .firstName(customerDTO.getFirstName())
-                .lastName(customerDTO.getLastName())
-                .email(customerDTO.getEmail())
-                .phone(customerDTO.getPhone())
-                .cnp(customerDTO.getCnp())
-                .build();
-    }
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Payment> payments;
+
 }

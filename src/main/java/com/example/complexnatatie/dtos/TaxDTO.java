@@ -8,21 +8,14 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@ToString
-public class CustomerDTO {
+public class TaxDTO {
 
     private int id;
 
-    private String firstName;
+    private String description;
 
-    private String lastName;
+    private CustomerType taxType;
 
-    private String phone;
-
-    private String cnp;
-
-    private String utcnID;
-
-    private CustomerType customerType;
+    private int taxValue;
 
 }
