@@ -25,9 +25,6 @@ public class Customer {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email")
-    private String email;
-
     @Column(name = "phone")
     private String phone;
 

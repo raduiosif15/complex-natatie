@@ -42,7 +42,6 @@ public record CustomerService(CustomerRepository customerRepository) {
 
         Customer customer = optionalCustomer.get();
         customer.setPhone(customerDTO.getPhone());
-        customer.setEmail(customerDTO.getEmail());
         customer.setUtcnID(customerDTO.getUtcnID());
         customer.setCustomerType(customerDTO.getCustomerType().getName());
 
