@@ -2,7 +2,7 @@ package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
-import com.example.complexnatatie.entities.CustomerType;
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import lombok.NoArgsConstructor;
 
 import java.util.List;

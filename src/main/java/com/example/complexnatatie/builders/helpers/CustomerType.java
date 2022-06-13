@@ -1,4 +1,4 @@
-package com.example.complexnatatie.entities;
+package com.example.complexnatatie.builders.helpers;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

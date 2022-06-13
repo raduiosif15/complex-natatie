@@ -1,6 +1,6 @@
 package com.example.complexnatatie.dtos;
 
-import com.example.complexnatatie.entities.CustomerType;
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import lombok.*;
 
 @NoArgsConstructor

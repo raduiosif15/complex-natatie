@@ -24,13 +24,6 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return ContractBuilder.fromEntities(contractRepository.findAll());
     }
 
-    // todo:
-    // search customer's active contract (if any)
-    // if true : return error message for creating a new one
-    // else: calculate total, display it and after confirmation create contract
-
-    // calculate total by contract customerType
-
     public ContractAvailabilityResponse checkIfOtherContractExists(int customerId) {
         final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
 

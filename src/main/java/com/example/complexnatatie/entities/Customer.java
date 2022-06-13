@@ -43,6 +43,16 @@ public class Customer {
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Subscription> subscriptions;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Contract> contracts;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Payment> payments;
 
 }

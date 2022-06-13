@@ -10,27 +10,27 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class SubscriptionBuilder {
 
-    public static SubscriptionDTO fromEntity(Subscription contract) {
+    public static SubscriptionDTO fromEntity(Subscription subscription) {
         return SubscriptionDTO.builder()
-                .id(contract.getId())
-                .valid(contract.isValid())
-                .startDate(contract.getStartDate())
-                .endDate(contract.getEndDate())
-                .customerId(contract.getCustomerId())
+                .id(subscription.getId())
+                .valid(subscription.isValid())
+                .startDate(subscription.getStartDate())
+                .endDate(subscription.getEndDate())
+                .customerId(subscription.getCustomerId())
                 .build();
     }
 
-    public static List<SubscriptionDTO> fromEntities(List<Subscription> contracts) {
-        return contracts.stream().map(SubscriptionBuilder::fromEntity).collect(Collectors.toList());
+    public static List<SubscriptionDTO> fromEntities(List<Subscription> subscriptions) {
+        return subscriptions.stream().map(SubscriptionBuilder::fromEntity).collect(Collectors.toList());
     }
 
-    public static Subscription fromDTO(SubscriptionDTO contractDTO) {
+    public static Subscription fromDTO(SubscriptionDTO subscriptionDTO) {
         return Subscription.builder()
-                .id(contractDTO.getId())
-                .valid(contractDTO.isValid())
-                .startDate(contractDTO.getStartDate())
-                .endDate(contractDTO.getEndDate())
-                .customerId(contractDTO.getCustomerId())
+                .id(subscriptionDTO.getId())
+                .valid(subscriptionDTO.isValid())
+                .startDate(subscriptionDTO.getStartDate())
+                .endDate(subscriptionDTO.getEndDate())
+                .customerId(subscriptionDTO.getCustomerId())
                 .build();
     }
 }

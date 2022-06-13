@@ -1,7 +1,7 @@
 package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.dtos.TaxDTO;
-import com.example.complexnatatie.entities.CustomerType;
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import com.example.complexnatatie.entities.Tax;
 import lombok.NoArgsConstructor;
 
