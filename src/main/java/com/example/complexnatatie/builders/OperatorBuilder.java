@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,9 +36,8 @@ public class OperatorBuilder {
     }
 
     public static UserDetailsImpl userDetailsBuilder(Operator operator) {
-        List<GrantedAuthority> authorities = operator.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(operator.getOperatorType()));
 
         return UserDetailsImpl.builder()
                 .username(operator.getUtcnId())

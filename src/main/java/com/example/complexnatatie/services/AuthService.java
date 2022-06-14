@@ -2,13 +2,12 @@ package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CreateAccountException;
-import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
+import com.example.complexnatatie.dtos.OperatorDTO;
 import com.example.complexnatatie.entities.Operator;
 import com.example.complexnatatie.repositories.OperatorRepository;
 import com.example.complexnatatie.security.jwt.JwtUtils;
-import com.example.complexnatatie.security.payload.requests.CreateAccountRequest;
-import com.example.complexnatatie.security.payload.responses.JwtResponse;
 import com.example.complexnatatie.security.payload.requests.LoginRequest;
+import com.example.complexnatatie.security.payload.responses.JwtResponse;
 import com.example.complexnatatie.security.service.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,13 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
 
     public JwtResponse auth(LoginRequest loginRequest) {
 
+        System.out.println("Login request: " + loginRequest.toString());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
+
+        System.out.println("Auth: " + authentication.toString());
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -42,6 +46,8 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+
+        // todo: check token creation and "role"
 
         return JwtResponse.builder()
                 .token(jwt)
@@ -52,10 +58,9 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
 
     }
 
+    public int createOperator(OperatorDTO operatorDTO) {
 
-    public void createAccount(CreateAccountRequest createAccountRequest) {
-
-        final String utcnId = createAccountRequest.getUtcnId();
+        final String utcnId = operatorDTO.getUtcnId();
         Optional<Operator> operatorOptional = operatorRepository.findByUtcnId(utcnId);
 
         if (operatorOptional.isPresent()) {
@@ -63,14 +68,14 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
             throw new CreateAccountException("Operator with utcnId: " + utcnId + " already exists");
         }
 
-
-
-
-
         Operator operator = Operator.builder()
-                .utcnId(utcnId)
-                .password(encoder.encode(createAccountRequest.getPassword()))
+                .utcnId(operatorDTO.getUtcnId())
+                .operatorType(operatorDTO.getOperatorType().getName())
+                .password(encoder.encode(operatorDTO.getPassword()))
                 .build();
+        Operator newOperator = operatorRepository.save(operator);
+
+        return newOperator.getId();
     }
 
 }
