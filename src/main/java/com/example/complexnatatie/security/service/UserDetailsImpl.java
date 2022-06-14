@@ -2,6 +2,7 @@ package com.example.complexnatatie.security.service;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @Getter
 @Builder
+@ToString
 public class UserDetailsImpl implements UserDetails {
 
     private int id;

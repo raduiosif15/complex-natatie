@@ -27,7 +27,7 @@ public class AuthController {
 
     @PostMapping("/createOperator")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Integer> createOperator(@Valid @RequestBody OperatorDTO operatorDTO) {
+    public ResponseEntity<Integer> createOperator(@RequestBody OperatorDTO operatorDTO) {
         return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.OK);
     }
 

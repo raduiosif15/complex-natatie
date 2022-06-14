@@ -1,6 +1,5 @@
 package com.example.complexnatatie.services;
 
-import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CreateAccountException;
 import com.example.complexnatatie.dtos.OperatorDTO;
 import com.example.complexnatatie.entities.Operator;
@@ -31,23 +30,17 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
 
     public JwtResponse auth(LoginRequest loginRequest) {
 
-        System.out.println("Login request: " + loginRequest.toString());
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
 
-        System.out.println("Auth: " + authentication.toString());
-
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-
-        // todo: check token creation and "role"
 
         return JwtResponse.builder()
                 .token(jwt)
