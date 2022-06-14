@@ -39,7 +39,7 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
 
         return JwtResponse.builder()
                 .token(jwt)
-                .id(userDetails.getId())
+                .id(operator.getId())
                 .utcnId(operator.getUtcnId())
                 .operatorType(operator.getOperatorType())
                 .build();
