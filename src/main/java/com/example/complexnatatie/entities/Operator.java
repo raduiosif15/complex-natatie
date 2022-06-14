@@ -3,6 +3,9 @@ package com.example.complexnatatie.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -16,6 +19,7 @@ public class Operator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Email
     @Column(name = "utcn_id")
     private String utcnId;
 
