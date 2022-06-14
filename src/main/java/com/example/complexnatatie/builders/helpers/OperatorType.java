@@ -11,11 +11,14 @@ public class OperatorType {
 
     private String name;
 
-    public static final OperatorType CASHIER = new OperatorType("CASHIER");
-    public static final OperatorType PORTER = new OperatorType("PORTER");
+    // DO NOT REMOVE "ROLE_" KEYWORD, because of defaultRolePrefix in SecurityExpressionRoot
+    public static final OperatorType ROLE_ADMIN = new OperatorType("ROLE_ADMIN");
+    public static final OperatorType ROLE_CASHIER = new OperatorType("ROLE_CASHIER");
+    public static final OperatorType ROLE_PORTER = new OperatorType("ROLE_PORTER");
 
     public static OperatorType[] values = new OperatorType[]{
-            CASHIER,
-            PORTER,
+            ROLE_ADMIN,
+            ROLE_CASHIER,
+            ROLE_PORTER,
     };
 }

@@ -5,6 +5,7 @@ import com.example.complexnatatie.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,25 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
     public ResponseEntity<List<SubscriptionDTO>> getAll() {
         return new ResponseEntity<>(subscriptionService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
+    public ResponseEntity<SubscriptionDTO> getById(@PathVariable int id) {
+        return new ResponseEntity<>(subscriptionService.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/customer/{customerId}")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
+    public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
+        return new ResponseEntity<>(subscriptionService.getByCustomerId(customerId), HttpStatus.OK);
+    }
+
     @PostMapping(value = "/create")
+    @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<SubscriptionDTO> create(@RequestBody SubscriptionDTO subscriptionDTO) {
         return new ResponseEntity<>(subscriptionService.create(subscriptionDTO), HttpStatus.CREATED);
     }

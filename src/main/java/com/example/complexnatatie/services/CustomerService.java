@@ -27,6 +27,7 @@ public record CustomerService(CustomerRepository customerRepository) {
     }
 
     public CustomerDTO save(CustomerDTO customerDTO) {
+        // todo: check if customer already exists (by utcnId)
         Customer customer = CustomerBuilder.fromDTO(customerDTO);
         customer = customerRepository.save(customer);
         return CustomerBuilder.fromEntity(customer);
