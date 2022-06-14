@@ -2,8 +2,6 @@ package com.example.complexnatatie.security.payload.responses;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,10 +13,8 @@ public class JwtResponse {
 
     private String token;
 
-    private String type = "Bearer";
-
     private String utcnId;
 
-    private List<String> roles;
+    private String operatorType;
 
 }
