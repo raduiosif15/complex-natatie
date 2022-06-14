@@ -11,6 +11,12 @@ import java.util.Collection;
 @Builder
 public class UserDetailsImpl implements UserDetails {
 
+    private int id;
+
+    private String utcnId;
+
+    private String operatorType;
+
     private String username;
 
     private String password;
