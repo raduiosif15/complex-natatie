@@ -12,7 +12,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
 
     @Query(value = "SELECT subscription " +
             "FROM Subscription subscription " +
-            "JOIN Customer customer ON customer.id = subscription.customerId " +
             "WHERE subscription.customerId = :customerId " +
             "AND subscription.startDate <= CURRENT_DATE " +
             "AND subscription.endDate >= CURRENT_DATE ")

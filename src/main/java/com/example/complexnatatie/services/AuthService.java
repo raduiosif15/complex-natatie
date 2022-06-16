@@ -1,6 +1,8 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CreateAccountException;
+import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.OperatorDTO;
 import com.example.complexnatatie.entities.Operator;
 import com.example.complexnatatie.repositories.OperatorRepository;
@@ -67,21 +69,21 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
     }
 
 
-//    public OperatorDTO changePassword(int id, String password) {
-//        Optional<Operator> optionalOperator = operatorRepository.findById(id);
-//
-//        if (optionalOperator.isEmpty()) {
-//            LOGGER.error("Operator with id: {} was not found in database", id);
-//            throw new ResourceNotFoundException("Operator with id: " + id + " was not found in database");
-//        }
-//
-//        Operator operator = optionalOperator.get();
-//
-//        operator.setPassword(encoder.encode(password));
-//
-//        operatorRepository.save(operator);
-//
-//        return OperatorBuilder.fromEntity(operator);
-//    }
+    public OperatorDTO changePassword(int id, String password) {
+        Optional<Operator> optionalOperator = operatorRepository.findById(id);
+
+        if (optionalOperator.isEmpty()) {
+            LOGGER.error("Operator with id: {} was not found in database", id);
+            throw new ResourceNotFoundException("Operator with id: " + id + " was not found in database");
+        }
+
+        Operator operator = optionalOperator.get();
+
+        operator.setPassword(encoder.encode(password));
+
+        operatorRepository.save(operator);
+
+        return OperatorBuilder.fromEntity(operator);
+    }
 
 }
