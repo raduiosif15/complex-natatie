@@ -32,6 +32,7 @@ public class OperatorBuilder {
 
         return UserDetailsImpl.builder()
                 .username(operator.getUtcnId())
+                .password(operator.getPassword())
                 .authorities(authorities)
                 .build();
     }
