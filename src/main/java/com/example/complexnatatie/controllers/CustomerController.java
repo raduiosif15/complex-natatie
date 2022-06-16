@@ -24,9 +24,9 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping(value = "/{name}")
     @PreAuthorize("hasRole('CASHIER')")
-    public ResponseEntity<List<CustomerDTO>> getByName(@RequestParam String name) {
+    public ResponseEntity<List<CustomerDTO>> getByName(@PathVariable String name) {
         return new ResponseEntity<>(customerService.getByName(name), HttpStatus.OK);
     }
 
