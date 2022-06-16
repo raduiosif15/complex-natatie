@@ -16,6 +16,6 @@ public class OperatorDTO {
 
     private String password;
 
-    private OperatorType operatorType;
+    private OperatorType type;
 
 }

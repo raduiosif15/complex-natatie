@@ -43,7 +43,7 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
                 .token(jwt)
                 .id(operator.getId())
                 .utcnId(operator.getUtcnId())
-                .operatorType(operator.getOperatorType())
+                .operatorType(operator.getType())
                 .build();
 
     }
@@ -60,7 +60,7 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
 
         Operator operator = Operator.builder()
                 .utcnId(operatorDTO.getUtcnId())
-                .operatorType(operatorDTO.getOperatorType().getName())
+                .type(operatorDTO.getType().getName())
                 .password(encoder.encode(operatorDTO.getPassword()))
                 .build();
         Operator newOperator = operatorRepository.save(operator);

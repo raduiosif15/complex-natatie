@@ -26,7 +26,7 @@ public class Operator {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "operator_type")
-    private String operatorType;
+    @Column(name = "type")
+    private String type;
 
 }

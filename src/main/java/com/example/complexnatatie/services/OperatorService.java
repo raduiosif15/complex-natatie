@@ -51,23 +51,15 @@ public class OperatorService implements UserDetailsService {
         Operator operator = optionalOperator.get();
 
         operator.setUtcnId(operatorDTO.getUtcnId());
-        operator.setOperatorType(operatorDTO.getOperatorType().getName());
+        operator.setType(operatorDTO.getType().getName());
 
         operatorRepository.save(operator);
 
         return OperatorBuilder.fromEntity(operator);
     }
 
-    public OperatorDTO delete(int id) {
-        Optional<Operator> optionalOperator = operatorRepository.findById(id);
-
-        if (optionalOperator.isEmpty()) {
-            LOGGER.error("Operator with id: {} was not found in database", id);
-            throw new ResourceNotFoundException("Operator with id: " + id + " was not found in database");
-        }
-
-        operatorRepository.delete(optionalOperator.get());
-
+    public Object deleteById(int id) {
+        operatorRepository.deleteById(id);
         return null;
     }
 }

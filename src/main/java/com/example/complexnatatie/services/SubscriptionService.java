@@ -34,8 +34,8 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository)
         return SubscriptionBuilder.fromEntity(optionalSubscription.get());
     }
 
-    public SubscriptionDTO getByCustomerId(int customerId) {
-        Optional<Subscription> optionalSubscription = subscriptionRepository.findByCustomerId(customerId);
+    public SubscriptionDTO findActiveByCustomerId(int customerId) {
+        Optional<Subscription> optionalSubscription = subscriptionRepository.findActiveByCustomerId(customerId);
 
         if (optionalSubscription.isEmpty()) {
             LOGGER.error("Customer with id: {} haven't any active subscription", customerId);

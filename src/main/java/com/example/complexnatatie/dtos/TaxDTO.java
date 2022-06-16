@@ -14,8 +14,8 @@ public class TaxDTO {
 
     private String description;
 
-    private CustomerType taxType;
+    private CustomerType type;
 
-    private int taxValue;
+    private int value;
 
 }

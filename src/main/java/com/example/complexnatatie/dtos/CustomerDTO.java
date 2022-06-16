@@ -23,6 +23,6 @@ public class CustomerDTO {
 
     private String utcnID;
 
-    private CustomerType customerType;
+    private CustomerType type;
 
 }

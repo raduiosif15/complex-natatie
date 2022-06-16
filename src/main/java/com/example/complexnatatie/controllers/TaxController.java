@@ -38,8 +38,8 @@ public class TaxController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaxDTO> delete(@PathVariable int id) {
-        return new ResponseEntity<>(taxService.delete(id), HttpStatus.OK);
+    public ResponseEntity<Object> deleteById(@PathVariable int id) {
+        return new ResponseEntity<>(taxService.deleteById(id), HttpStatus.OK);
     }
 
 }

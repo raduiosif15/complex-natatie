@@ -13,7 +13,6 @@ public class SubscriptionBuilder {
     public static SubscriptionDTO fromEntity(Subscription subscription) {
         return SubscriptionDTO.builder()
                 .id(subscription.getId())
-                .valid(subscription.isValid())
                 .startDate(subscription.getStartDate())
                 .endDate(subscription.getEndDate())
                 .customerId(subscription.getCustomerId())
@@ -27,7 +26,6 @@ public class SubscriptionBuilder {
     public static Subscription fromDTO(SubscriptionDTO subscriptionDTO) {
         return Subscription.builder()
                 .id(subscriptionDTO.getId())
-                .valid(subscriptionDTO.isValid())
                 .startDate(subscriptionDTO.getStartDate())
                 .endDate(subscriptionDTO.getEndDate())
                 .customerId(subscriptionDTO.getCustomerId())

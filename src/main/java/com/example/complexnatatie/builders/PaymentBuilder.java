@@ -16,9 +16,9 @@ public class PaymentBuilder {
                 .id(payment.getId())
 
                 .number(payment.getNumber())
-                .payDate(payment.getPayDate())
-                .payValue(payment.getPayValue())
-                .payType(new PaymentType(payment.getPayType()))
+                .date(payment.getDate())
+                .value(payment.getValue())
+                .type(new PaymentType(payment.getType()))
                 .description(payment.getDescription())
                 .customerId(payment.getCustomerId())
 
@@ -33,9 +33,9 @@ public class PaymentBuilder {
         return Payment.builder()
                 .id(paymentDTO.getId())
                 .number(paymentDTO.getNumber())
-                .payDate(paymentDTO.getPayDate())
-                .payValue(paymentDTO.getPayValue())
-                .payType(paymentDTO.getPayType().getName())
+                .date(paymentDTO.getDate())
+                .value(paymentDTO.getValue())
+                .type(paymentDTO.getType().getName())
                 .description(paymentDTO.getDescription())
                 .customerId(paymentDTO.getCustomerId())
                 .build();

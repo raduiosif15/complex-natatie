@@ -13,11 +13,9 @@ public class PaymentType {
 
     public static final PaymentType CASH = new PaymentType("CASH");
     public static final PaymentType POS = new PaymentType("POS");
-    public static final PaymentType ONLINE = new PaymentType("ONLINE");
 
     public static PaymentType[] values = new PaymentType[]{
             CASH,
             POS,
-            ONLINE,
     };
 }

@@ -18,7 +18,7 @@ public class OperatorBuilder {
         return OperatorDTO.builder()
                 .id(operator.getId())
                 .utcnId(operator.getUtcnId())
-                .operatorType(new OperatorType(operator.getOperatorType()))
+                .type(new OperatorType(operator.getType()))
                 .build();
     }
 
@@ -28,7 +28,7 @@ public class OperatorBuilder {
 
     public static UserDetailsImpl userDetailsBuilder(Operator operator) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(operator.getOperatorType()));
+        authorities.add(new SimpleGrantedAuthority(operator.getType()));
 
         return UserDetailsImpl.builder()
                 .username(operator.getUtcnId())
