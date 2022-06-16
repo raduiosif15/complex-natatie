@@ -45,8 +45,8 @@ public class CustomerController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('CASHIER')")
-    public ResponseEntity<CustomerDTO> delete(@PathVariable int id) {
-        return new ResponseEntity<>(customerService.delete(id), HttpStatus.OK);
+    public ResponseEntity<Object> deleteById(@PathVariable int id) {
+        return new ResponseEntity<>(customerService.deleteById(id), HttpStatus.OK);
     }
 
 }

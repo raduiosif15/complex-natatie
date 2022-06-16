@@ -16,13 +16,13 @@ public class PaymentDTO {
 
     private int number;
 
-    private Date payDate;
+    private Date date;
 
-    private double payValue;
+    private double value;
 
     private String description;
 
-    private PaymentType payType;
+    private PaymentType type;
 
     private int customerId;
 

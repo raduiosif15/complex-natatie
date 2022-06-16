@@ -14,8 +14,8 @@ public class TaxBuilder {
         return TaxDTO.builder()
                 .id(tax.getId())
                 .description(tax.getDescription())
-                .taxType(new CustomerType(tax.getTaxType()))
-                .taxValue(tax.getTaxValue())
+                .type(new CustomerType(tax.getType()))
+                .value(tax.getValue())
                 .build();
     }
 
@@ -26,8 +26,8 @@ public class TaxBuilder {
     public static Tax fromDTO(TaxDTO taxDTO) {
         return Tax.builder()
                 .description(taxDTO.getDescription())
-                .taxType(taxDTO.getTaxType().getName())
-                .taxValue(taxDTO.getTaxValue())
+                .type(taxDTO.getType().getName())
+                .value(taxDTO.getValue())
                 .build();
     }
 }

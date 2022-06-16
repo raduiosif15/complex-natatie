@@ -37,24 +37,16 @@ public record TaxService(TaxRepository taxRepository) {
         Tax tax = optionalTax.get();
 
         tax.setDescription(taxDTO.getDescription());
-        tax.setTaxType(taxDTO.getTaxType().getName());
-        tax.setTaxValue(taxDTO.getTaxValue());
+        tax.setType(taxDTO.getType().getName());
+        tax.setValue(taxDTO.getValue());
 
         taxRepository.save(tax);
 
         return TaxBuilder.fromEntity(tax);
     }
 
-    public TaxDTO delete(int id) {
-        Optional<Tax> optionalTax = taxRepository.findById(id);
-
-        if (optionalTax.isEmpty()) {
-            LOGGER.error("Tax with id: {} was not found in database", id);
-            throw new ResourceNotFoundException("Tax with id: " + id + " was not found in database");
-        }
-
-        taxRepository.delete(optionalTax.get());
-
+    public Object deleteById(int id) {
+        taxRepository.deleteById(id);
         return null;
     }
 }

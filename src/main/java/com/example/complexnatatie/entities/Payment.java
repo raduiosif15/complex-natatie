@@ -20,17 +20,17 @@ public class Payment {
     @Column(name = "number", nullable = false)
     private int number;
 
-    @Column(name = "pay_date", nullable = false)
-    private Date payDate;
+    @Column(name = "date", nullable = false)
+    private Date date;
 
-    @Column(name = "pay_value", nullable = false)
-    private double payValue;
+    @Column(name = "value", nullable = false)
+    private double value;
 
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "pay_type", nullable = false)
-    private String payType;
+    @Column(name = "type", nullable = false)
+    private String type;
 
     @Column(name = "customer_id", nullable = false)
     private int customerId;

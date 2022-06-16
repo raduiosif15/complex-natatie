@@ -32,8 +32,8 @@ public class OperatorController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OperatorDTO> delete(@PathVariable int id) {
-        return new ResponseEntity<>(operatorService.delete(id), HttpStatus.OK);
+    public ResponseEntity<Object> deleteById(@PathVariable int id) {
+        return new ResponseEntity<>(operatorService.deleteById(id), HttpStatus.OK);
     }
 
 }

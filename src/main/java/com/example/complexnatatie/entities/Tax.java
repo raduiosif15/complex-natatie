@@ -19,10 +19,10 @@ public class Tax {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "tax_type", nullable = false)
-    private String taxType;
+    @Column(name = "type", nullable = false)
+    private String type;
 
-    @Column(name = "tax_value", nullable = false)
-    private int taxValue;
+    @Column(name = "value", nullable = false)
+    private int value;
 
 }

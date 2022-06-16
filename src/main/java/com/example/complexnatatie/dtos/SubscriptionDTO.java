@@ -13,8 +13,6 @@ public class SubscriptionDTO {
 
     private int id;
 
-    private boolean valid;
-
     private Date startDate;
 
     private Date endDate;

@@ -30,10 +30,10 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscriptionService.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/customers/{customerId}")
+    @GetMapping(value = "/customers/active/{customerId}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
     public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
-        return new ResponseEntity<>(subscriptionService.getByCustomerId(customerId), HttpStatus.OK);
+        return new ResponseEntity<>(subscriptionService.findActiveByCustomerId(customerId), HttpStatus.OK);
     }
 
     @PostMapping

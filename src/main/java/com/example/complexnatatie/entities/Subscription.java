@@ -17,9 +17,6 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "valid", nullable = false)
-    private boolean valid;
-
     @Column(name = "start_date", nullable = false)
     private Date startDate;
 

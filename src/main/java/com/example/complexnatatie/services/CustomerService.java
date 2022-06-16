@@ -44,23 +44,15 @@ public record CustomerService(CustomerRepository customerRepository) {
         Customer customer = optionalCustomer.get();
         customer.setPhone(customerDTO.getPhone());
         customer.setUtcnID(customerDTO.getUtcnID());
-        customer.setCustomerType(customerDTO.getCustomerType().getName());
+        customer.setType(customerDTO.getType().getName());
 
         customerRepository.save(customer);
 
         return CustomerBuilder.fromEntity(customer);
     }
 
-    public CustomerDTO delete(int id) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(id);
-
-        if (optionalCustomer.isEmpty()) {
-            LOGGER.error("Customer with id: {} was not found in database", id);
-            throw new ResourceNotFoundException("Customer with id: " + id + " was not found in database");
-        }
-
-        customerRepository.delete(optionalCustomer.get());
-
+    public Object deleteById(int id) {
+        customerRepository.deleteById(id);
         return null;
     }
 }

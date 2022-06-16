@@ -34,8 +34,8 @@ public class Customer {
     @Column(name = "utcn_id")
     private String utcnID;
 
-    @Column(name = "customer_type", nullable = false)
-    private String customerType;
+    @Column(name = "type", nullable = false)
+    private String type;
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
