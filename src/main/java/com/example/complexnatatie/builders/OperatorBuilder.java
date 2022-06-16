@@ -19,20 +19,11 @@ public class OperatorBuilder {
                 .id(operator.getId())
                 .utcnId(operator.getUtcnId())
                 .operatorType(new OperatorType(operator.getOperatorType()))
-                .password(operator.getPassword())
                 .build();
     }
 
     public static List<OperatorDTO> fromEntities(List<Operator> operators) {
         return operators.stream().map(OperatorBuilder::fromEntity).collect(Collectors.toList());
-    }
-
-    public static Operator fromDTO(OperatorDTO operatorDTO) {
-        return Operator.builder()
-                .utcnId(operatorDTO.getUtcnId())
-                .operatorType(operatorDTO.getOperatorType().getName())
-                .password(operatorDTO.getPassword())
-                .build();
     }
 
     public static UserDetailsImpl userDetailsBuilder(Operator operator) {
@@ -41,7 +32,6 @@ public class OperatorBuilder {
 
         return UserDetailsImpl.builder()
                 .username(operator.getUtcnId())
-                .password(operator.getPassword())
                 .authorities(authorities)
                 .build();
     }

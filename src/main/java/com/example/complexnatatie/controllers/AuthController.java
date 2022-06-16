@@ -31,4 +31,10 @@ public class AuthController {
         return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.OK);
     }
 
+//    @PutMapping(value = "/{id}/{password}")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<OperatorDTO> changePassword(@PathVariable int id, @PathVariable String password) {
+//        return new ResponseEntity<>(authService.changePassword(id, password), HttpStatus.OK);
+//    }
+
 }
