@@ -20,12 +20,12 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/authentication")
+    @PostMapping("/signIn")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.auth(loginRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/createOperator")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Integer> createOperator(@RequestBody OperatorDTO operatorDTO) {
         return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.OK);

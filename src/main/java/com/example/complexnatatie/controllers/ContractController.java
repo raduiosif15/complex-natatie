@@ -25,13 +25,13 @@ public class ContractController {
         return new ResponseEntity<>(contractService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/availability/{customerId}")
+    @GetMapping(value = "/check-availability/{customerId}")
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<ContractAvailabilityResponse> checkIfOtherContractExists(@PathVariable int customerId) {
         return new ResponseEntity<>(contractService.checkIfOtherContractExists(customerId), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(value = "/create")
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<ContractDTO> create(@RequestBody ContractDTO contractDTO) {
         return new ResponseEntity<>(contractService.create(contractDTO), HttpStatus.CREATED);

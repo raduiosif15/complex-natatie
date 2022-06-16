@@ -24,7 +24,7 @@ public class TaxController {
         return new ResponseEntity<>(taxService.getAll(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(value = "/add")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaxDTO> add(@RequestBody TaxDTO taxDTO) {
         return new ResponseEntity<>(taxService.save(taxDTO), HttpStatus.CREATED);
