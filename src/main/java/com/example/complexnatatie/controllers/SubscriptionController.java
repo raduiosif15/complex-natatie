@@ -30,13 +30,13 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscriptionService.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/customer/{customerId}")
+    @GetMapping(value = "/customers/{customerId}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
     public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
         return new ResponseEntity<>(subscriptionService.getByCustomerId(customerId), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<SubscriptionDTO> create(@RequestBody SubscriptionDTO subscriptionDTO) {
         return new ResponseEntity<>(subscriptionService.create(subscriptionDTO), HttpStatus.CREATED);

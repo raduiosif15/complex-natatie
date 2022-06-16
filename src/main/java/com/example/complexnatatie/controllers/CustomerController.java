@@ -24,13 +24,13 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/search")
+    @GetMapping
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<List<CustomerDTO>> getByName(@RequestParam String name) {
         return new ResponseEntity<>(customerService.getByName(name), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/add")
+    @PostMapping
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<CustomerDTO> add(@RequestBody CustomerDTO customerDTO) {
         System.out.println("customer dto: " + customerDTO);
