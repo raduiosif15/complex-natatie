@@ -15,6 +15,6 @@ public class JwtResponse {
 
     private String utcnId;
 
-    private String operatorType;
+    private String type;
 
 }
