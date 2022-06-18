@@ -19,32 +19,32 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<CustomerDTO>> getAll() {
         return new ResponseEntity<>(customerService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{name}")
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<CustomerDTO>> getByName(@PathVariable String name) {
         return new ResponseEntity<>(customerService.getByName(name), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> add(@RequestBody CustomerDTO customerDTO) {
         System.out.println("customer dto: " + customerDTO);
         return new ResponseEntity<>(customerService.save(customerDTO), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> update(@PathVariable int id, @RequestBody CustomerDTO customerDTO) {
         return new ResponseEntity<>(customerService.update(id, customerDTO), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Object> deleteById(@PathVariable int id) {
         return new ResponseEntity<>(customerService.deleteById(id), HttpStatus.OK);
     }

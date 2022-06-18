@@ -19,25 +19,25 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
     public ResponseEntity<List<SubscriptionDTO>> getAll() {
         return new ResponseEntity<>(subscriptionService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
     public ResponseEntity<SubscriptionDTO> getById(@PathVariable int id) {
         return new ResponseEntity<>(subscriptionService.getById(id), HttpStatus.OK);
     }
 
     @GetMapping(value = "/customers/active/{customerId}")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
     public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
         return new ResponseEntity<>(subscriptionService.findActiveByCustomerId(customerId), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<SubscriptionDTO> create(@RequestBody SubscriptionDTO subscriptionDTO) {
         return new ResponseEntity<>(subscriptionService.create(subscriptionDTO), HttpStatus.CREATED);
     }
