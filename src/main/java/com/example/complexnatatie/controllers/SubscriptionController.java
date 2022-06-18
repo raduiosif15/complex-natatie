@@ -8,38 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping(value = "/subscriptions")
 public class SubscriptionController {
 
+    // subscriptions are created by the system once payment is confirmed
     private final SubscriptionService subscriptionService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
-    public ResponseEntity<List<SubscriptionDTO>> getAll() {
-        return new ResponseEntity<>(subscriptionService.getAll(), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
-    public ResponseEntity<SubscriptionDTO> getById(@PathVariable int id) {
-        return new ResponseEntity<>(subscriptionService.getById(id), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/customers/active/{customerId}")
+    @GetMapping(value = "/{customerId}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
     public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
         return new ResponseEntity<>(subscriptionService.findActiveByCustomerId(customerId), HttpStatus.OK);
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<SubscriptionDTO> create(@RequestBody SubscriptionDTO subscriptionDTO) {
-        return new ResponseEntity<>(subscriptionService.create(subscriptionDTO), HttpStatus.CREATED);
     }
 
 }
