@@ -34,7 +34,7 @@ public class ContractController {
     @GetMapping(value = "/{customerId}/preview")
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<ContractDTO> preview(@PathVariable int customerId) {
-        return new ResponseEntity<>(contractService.create(customerId, true), HttpStatus.CREATED);
+        return new ResponseEntity<>(contractService.create(customerId, true), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{customerId}")
