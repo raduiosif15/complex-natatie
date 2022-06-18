@@ -20,7 +20,7 @@ public class TaxBuilder {
     }
 
     public static List<TaxDTO> fromEntities(List<Tax> taxes) {
-        return taxes.stream().map(TaxBuilder::fromEntity).sorted().collect(Collectors.toList());
+        return taxes.stream().map(TaxBuilder::fromEntity).collect(Collectors.toList());
     }
 
     public static Tax fromDTO(TaxDTO taxDTO) {
