@@ -31,9 +31,15 @@ public class ContractController {
         return new ResponseEntity<>(contractService.checkValidContractExists(customerId), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/preview")
+    @PreAuthorize("hasRole('CASHIER')")
+    public ResponseEntity<ContractDTO> preview(@RequestBody ContractDTO contractDTO) {
+        return new ResponseEntity<>(contractService.create(contractDTO, true), HttpStatus.CREATED);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('CASHIER')")
     public ResponseEntity<ContractDTO> create(@RequestBody ContractDTO contractDTO) {
-        return new ResponseEntity<>(contractService.create(contractDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(contractService.create(contractDTO, false), HttpStatus.CREATED);
     }
 }

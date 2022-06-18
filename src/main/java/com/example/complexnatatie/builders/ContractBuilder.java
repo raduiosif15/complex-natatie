@@ -16,6 +16,7 @@ public class ContractBuilder {
                 .number(contract.getNumber())
                 .startDate(contract.getStartDate())
                 .endDate(contract.getEndDate())
+                .value(contract.getValue())
                 .customerId(contract.getCustomerId())
                 .build();
     }
@@ -30,6 +31,7 @@ public class ContractBuilder {
                 .number(contractDTO.getNumber())
                 .startDate(contractDTO.getStartDate())
                 .endDate(contractDTO.getEndDate())
+                .value(contractDTO.getValue())
                 .customerId(contractDTO.getCustomerId())
                 .build();
     }
