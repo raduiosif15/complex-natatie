@@ -31,7 +31,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         if (optionalContract.isPresent()) {
             final Contract contract = optionalContract.get();
 
-            return new ContractValidityResponse(true, contract.getEndDate());
+            return new ContractValidityResponse(true, ContractBuilder.fromEntity(contract));
         }
 
         return new ContractValidityResponse(false, null);
@@ -42,8 +42,8 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
 
         if (checkValidity.isValid()) {
-            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getDate());
-            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getDate(), HttpStatus.CONFLICT);
+            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContractDTO().getEndDate());
+            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContractDTO().getEndDate(), HttpStatus.CONFLICT);
         }
 
         Contract contract = ContractBuilder.fromDTO(contractDTO);
