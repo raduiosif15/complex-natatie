@@ -1,6 +1,6 @@
 package com.example.complexnatatie.controllers;
 
-import com.example.complexnatatie.dtos.SubscriptionDTO;
+import com.example.complexnatatie.controllers.handlers.responses.SubscriptionResponse;
 import com.example.complexnatatie.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class SubscriptionController {
 
     @GetMapping(value = "/{customerId}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
-    public ResponseEntity<SubscriptionDTO> getByCustomerId(@PathVariable int customerId) {
+    public ResponseEntity<SubscriptionResponse> findActiveByCustomerId(@PathVariable int customerId) {
         return new ResponseEntity<>(subscriptionService.findActiveByCustomerId(customerId), HttpStatus.OK);
     }
 

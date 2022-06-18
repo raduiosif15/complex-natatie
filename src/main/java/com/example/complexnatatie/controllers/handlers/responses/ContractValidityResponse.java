@@ -14,11 +14,11 @@ public class ContractValidityResponse extends CustomResponse {
 
     private boolean valid;
 
-    private ContractDTO contractDTO;
+    private ContractDTO contract;
 
-    public ContractValidityResponse(String message, boolean valid, ContractDTO contractDTO) {
+    public ContractValidityResponse(String message, boolean valid, ContractDTO contract) {
         super(message);
         this.valid = valid;
-        this.contractDTO = contractDTO;
+        this.contract = contract;
     }
 }

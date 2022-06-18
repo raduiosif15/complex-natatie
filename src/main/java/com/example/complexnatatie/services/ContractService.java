@@ -58,8 +58,8 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
 
         final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
         if (checkValidity.isValid()) {
-            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContractDTO().getEndDate());
-            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContractDTO().getEndDate(), HttpStatus.CONFLICT);
+            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContract().getEndDate());
+            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContract().getEndDate(), HttpStatus.CONFLICT);
         }
 
         final ContractDTO contractDTO = new ContractDTO();
