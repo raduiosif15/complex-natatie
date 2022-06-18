@@ -2,7 +2,7 @@ package com.example.complexnatatie.controllers;
 
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.services.ContractService;
-import com.example.complexnatatie.controllers.handlers.responses.ContractAvailabilityResponse;
+import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +25,10 @@ public class ContractController {
         return new ResponseEntity<>(contractService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/availability/{customerId}")
+    @GetMapping(value = "/{customerId}/valid")
     @PreAuthorize("hasRole('CASHIER')")
-    public ResponseEntity<ContractAvailabilityResponse> checkIfOtherContractExists(@PathVariable int customerId) {
-        return new ResponseEntity<>(contractService.checkIfOtherContractExists(customerId), HttpStatus.OK);
+    public ResponseEntity<ContractValidityResponse> checkValidContractExists(@PathVariable int customerId) {
+        return new ResponseEntity<>(contractService.checkValidContractExists(customerId), HttpStatus.OK);
     }
 
     @PostMapping

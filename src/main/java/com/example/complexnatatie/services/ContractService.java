@@ -2,7 +2,7 @@ package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
-import com.example.complexnatatie.controllers.handlers.responses.ContractAvailabilityResponse;
+import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.repositories.ContractRepository;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository) {
@@ -24,30 +25,25 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return ContractBuilder.fromEntities(contractRepository.findAll());
     }
 
-    public ContractAvailabilityResponse checkIfOtherContractExists(int customerId) {
-        final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
+    public ContractValidityResponse checkValidContractExists(int customerId) {
+        final Optional<Contract> optionalContract = contractRepository.getActiveContractByCustomerId(customerId);
 
-        if (contracts.isEmpty()) {
-            return new ContractAvailabilityResponse(true, null);
+        if (optionalContract.isPresent()) {
+            final Contract contract = optionalContract.get();
+
+            return new ContractValidityResponse(true, contract.getEndDate());
         }
 
-        final Date firstContractExpirationDate = contracts.get(0).getEndDate();
-        final Date date = new Date();
-
-        if (firstContractExpirationDate.after(date)) {
-            return new ContractAvailabilityResponse(false, firstContractExpirationDate);
-        }
-
-        return new ContractAvailabilityResponse(true, null);
+        return new ContractValidityResponse(false, null);
     }
 
     public ContractDTO create(ContractDTO contractDTO) {
         final int customerId = contractDTO.getCustomerId();
-        final ContractAvailabilityResponse checkAvailability = checkIfOtherContractExists(customerId);
+        final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
 
-        if (!checkAvailability.isAvailable()) {
-            LOGGER.error("Customer with id: {} already have an active contract.", customerId);
-            throw new ContractException("Customer with id: " + customerId + " already have an active contract", HttpStatus.CONFLICT);
+        if (checkValidity.isValid()) {
+            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getDate());
+            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getDate(), HttpStatus.CONFLICT);
         }
 
         Contract contract = ContractBuilder.fromDTO(contractDTO);

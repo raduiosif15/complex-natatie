@@ -11,15 +11,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ContractAvailabilityResponse extends CustomResponse {
+public class ContractValidityResponse extends CustomResponse {
 
-    private boolean available;
+    private boolean valid;
 
     private Date date;
 
-    public ContractAvailabilityResponse(String message, boolean available, Date date) {
+    public ContractValidityResponse(String message, boolean valid, Date date) {
         super(message);
-        this.available = available;
+        this.valid = valid;
         this.date = date;
     }
 }
