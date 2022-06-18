@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Builder
+@ToString
 public class Tax {
 
     @Id
@@ -22,7 +23,8 @@ public class Tax {
     @Column(name = "type", nullable = false)
     private String type;
 
+    // value per year
     @Column(name = "value", nullable = false)
-    private int value;
+    private double value;
 
 }

@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 public class TaxDTO {
 
     private int id;
@@ -16,6 +17,6 @@ public class TaxDTO {
 
     private CustomerType type;
 
-    private int value;
+    private double value;
 
 }

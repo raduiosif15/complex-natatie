@@ -19,6 +19,8 @@ public class ContractDTO {
 
     private Date endDate;
 
+    private double value;
+
     private int customerId;
 
 }

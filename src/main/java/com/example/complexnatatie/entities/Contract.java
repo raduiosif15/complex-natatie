@@ -26,6 +26,9 @@ public class Contract {
     @Column(name = "end_date", nullable = false)
     private Date endDate;
 
+    @Column(name = "value", nullable = false)
+    private double value;
+
     @Column(name = "customer_id", nullable = false)
     private int customerId;
 

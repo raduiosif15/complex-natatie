@@ -1,68 +1,98 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.ContractBuilder;
+import com.example.complexnatatie.builders.CustomerBuilder;
+import com.example.complexnatatie.builders.TaxBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
-import com.example.complexnatatie.controllers.handlers.responses.ContractAvailabilityResponse;
+import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
+import com.example.complexnatatie.dtos.CustomerDTO;
+import com.example.complexnatatie.dtos.TaxDTO;
 import com.example.complexnatatie.entities.Contract;
+import com.example.complexnatatie.entities.Customer;
+import com.example.complexnatatie.entities.Tax;
 import com.example.complexnatatie.repositories.ContractRepository;
 import com.example.complexnatatie.repositories.CustomerRepository;
+import com.example.complexnatatie.repositories.TaxRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository) {
+public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository,
+                              TaxRepository taxRepository) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
 
     public List<ContractDTO> getAll() {
         return ContractBuilder.fromEntities(contractRepository.findAll());
     }
 
-    public ContractAvailabilityResponse checkIfOtherContractExists(int customerId) {
-        final List<Contract> contracts = contractRepository.getContractsByCustomerId(customerId);
+    public ContractValidityResponse checkValidContractExists(int customerId) {
+        final Optional<Contract> optionalContract = contractRepository.getActiveContractByCustomerId(customerId);
 
-        if (contracts.isEmpty()) {
-            return new ContractAvailabilityResponse(true, null);
+        if (optionalContract.isPresent()) {
+            final Contract contract = optionalContract.get();
+
+            return new ContractValidityResponse(true, ContractBuilder.fromEntity(contract));
         }
 
-        final Date firstContractExpirationDate = contracts.get(0).getEndDate();
-        final Date date = new Date();
-
-        if (firstContractExpirationDate.after(date)) {
-            return new ContractAvailabilityResponse(false, firstContractExpirationDate);
-        }
-
-        return new ContractAvailabilityResponse(true, null);
+        return new ContractValidityResponse(false, null);
     }
 
-    public ContractDTO create(ContractDTO contractDTO) {
-        final int customerId = contractDTO.getCustomerId();
-        final ContractAvailabilityResponse checkAvailability = checkIfOtherContractExists(customerId);
+    public ContractDTO create(int customerId, boolean isPreview) {
+        final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
 
-        if (!checkAvailability.isAvailable()) {
-            LOGGER.error("Customer with id: {} already have an active contract.", customerId);
-            throw new ContractException("Customer with id: " + customerId + " already have an active contract", HttpStatus.CONFLICT);
+        if (optionalCustomer.isEmpty()) {
+            LOGGER.error("Customer with id: {} doesn't exist.", customerId);
+            throw new ResourceAccessException("Customer with id: " + customerId + " doesn't exist.");
         }
 
-        Contract contract = ContractBuilder.fromDTO(contractDTO);
+        final CustomerDTO customerDTO = CustomerBuilder.fromEntity(optionalCustomer.get());
+
+        final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
+        if (checkValidity.isValid()) {
+            LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContract().getEndDate());
+            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContract().getEndDate(), HttpStatus.CONFLICT);
+        }
+
+        final ContractDTO contractDTO = new ContractDTO();
+        contractDTO.setCustomerId(customerId);
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
 
         calendar.setTime(date);
-        contract.setStartDate(calendar.getTime());
+        contractDTO.setStartDate(calendar.getTime());
 
         calendar.add(Calendar.YEAR, 1);
         calendar.add(Calendar.DATE, -1);
-        contract.setEndDate(calendar.getTime());
+        contractDTO.setEndDate(calendar.getTime());
 
-        contract = contractRepository.save(contract);
-        return ContractBuilder.fromEntity(contract);
+        final String type = customerDTO.getType().getName();
+        final Optional<Tax> optionalTax = taxRepository.findByType(type);
+
+        if (optionalTax.isEmpty()) {
+            LOGGER.error("Tax with type: {} doesn't exist.", type);
+            throw new ResourceAccessException("Tax with type: " + type + " doesn't exist.");
+        }
+
+        final TaxDTO taxDTO = TaxBuilder.fromEntity(optionalTax.get());
+
+        contractDTO.setValue(taxDTO.getValue());
+
+        if (!isPreview) {
+            Contract contract = ContractBuilder.fromDTO(contractDTO);
+            contract = contractRepository.save(contract);
+            return ContractBuilder.fromEntity(contract);
+        }
+
+        return contractDTO;
     }
 
 }
