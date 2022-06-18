@@ -31,15 +31,15 @@ public class ContractController {
         return new ResponseEntity<>(contractService.checkValidContractExists(customerId), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/preview")
+    @GetMapping(value = "/{customerId}/preview")
     @PreAuthorize("hasRole('CASHIER')")
-    public ResponseEntity<ContractDTO> preview(@RequestBody ContractDTO contractDTO) {
-        return new ResponseEntity<>(contractService.create(contractDTO, true), HttpStatus.CREATED);
+    public ResponseEntity<ContractDTO> preview(@PathVariable int customerId) {
+        return new ResponseEntity<>(contractService.create(customerId, true), HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping(value = "/{customerId}")
     @PreAuthorize("hasRole('CASHIER')")
-    public ResponseEntity<ContractDTO> create(@RequestBody ContractDTO contractDTO) {
-        return new ResponseEntity<>(contractService.create(contractDTO, false), HttpStatus.CREATED);
+    public ResponseEntity<ContractDTO> create(@PathVariable int customerId) {
+        return new ResponseEntity<>(contractService.create(customerId, false), HttpStatus.CREATED);
     }
 }

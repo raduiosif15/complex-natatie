@@ -46,9 +46,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return new ContractValidityResponse(false, null);
     }
 
-    public ContractDTO create(ContractDTO contractDTO, boolean isPreview) {
-        final int customerId = contractDTO.getCustomerId();
-
+    public ContractDTO create(int customerId, boolean isPreview) {
         final Optional<Customer> optionalCustomer = customerRepository.findById(customerId);
 
         if (optionalCustomer.isEmpty()) {
@@ -64,6 +62,8 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
             throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContractDTO().getEndDate(), HttpStatus.CONFLICT);
         }
 
+        final ContractDTO contractDTO = new ContractDTO();
+        contractDTO.setCustomerId(customerId);
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
 
