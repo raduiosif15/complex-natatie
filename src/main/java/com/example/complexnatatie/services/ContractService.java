@@ -40,10 +40,10 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         if (optionalContract.isPresent()) {
             final Contract contract = optionalContract.get();
 
-            return new ContractValidityResponse(true, ContractBuilder.fromEntity(contract));
+            return new ContractValidityResponse(ContractBuilder.fromEntity(contract));
         }
 
-        return new ContractValidityResponse(false, null);
+        return new ContractValidityResponse();
     }
 
     public ContractDTO create(int customerId, boolean isPreview) {
@@ -57,7 +57,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         final CustomerDTO customerDTO = CustomerBuilder.fromEntity(optionalCustomer.get());
 
         final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
-        if (checkValidity.isValid()) {
+        if (checkValidity.getContract() != null) {
             LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContract().getEndDate());
             throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContract().getEndDate(), HttpStatus.CONFLICT);
         }

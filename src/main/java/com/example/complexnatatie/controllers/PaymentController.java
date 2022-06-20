@@ -1,5 +1,6 @@
 package com.example.complexnatatie.controllers;
 
+import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.dtos.PaymentDTO;
 import com.example.complexnatatie.services.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class PaymentController {
 
     @PostMapping()
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<PaymentDTO> pay(@RequestBody PaymentDTO paymentDTO) {
-        return new ResponseEntity<>(paymentService.pay(paymentDTO), HttpStatus.OK);
+    public ResponseEntity<PaymentDTO> pay(@RequestBody PaymentRequest paymentRequest) {
+        return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.OK);
     }
 
 }

@@ -21,4 +21,7 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository)
         return new SubscriptionResponse(SubscriptionBuilder.fromEntity(optionalSubscription.get()));
     }
 
+
+
+
 }
