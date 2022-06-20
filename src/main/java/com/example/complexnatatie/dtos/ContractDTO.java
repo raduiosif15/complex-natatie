@@ -1,5 +1,6 @@
 package com.example.complexnatatie.dtos;
 
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import lombok.*;
 
 import java.util.Date;
@@ -9,17 +10,20 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
+@ToString
 public class ContractDTO {
 
     private int id;
-
-    private int number;
 
     private Date startDate;
 
     private Date endDate;
 
-    private double value;
+    private double monthly;
+
+    private double total;
+
+    private CustomerType customerType;
 
     private int customerId;
 

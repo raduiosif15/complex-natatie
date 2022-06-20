@@ -3,7 +3,8 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.TaxBuilder;
-import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
+import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
+import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.CustomerDTO;
@@ -20,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository,
@@ -34,16 +32,29 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return ContractBuilder.fromEntities(contractRepository.findAll());
     }
 
+    public ContractDTO getById(int contractId) {
+        final Optional<Contract> optionalContract = contractRepository.getById(contractId);
+
+        if (optionalContract.isEmpty()) {
+
+            LOGGER.error("Contract with id: {} doesn't exist.", contractId);
+            throw new ResourceNotFoundException("Contract with id: " + contractId + " doesn't exist.");
+
+        }
+
+        return ContractBuilder.fromEntity(optionalContract.get());
+    }
+
     public ContractValidityResponse checkValidContractExists(int customerId) {
         final Optional<Contract> optionalContract = contractRepository.getActiveContractByCustomerId(customerId);
 
         if (optionalContract.isPresent()) {
             final Contract contract = optionalContract.get();
 
-            return new ContractValidityResponse(true, ContractBuilder.fromEntity(contract));
+            return new ContractValidityResponse(ContractBuilder.fromEntity(contract));
         }
 
-        return new ContractValidityResponse(false, null);
+        return new ContractValidityResponse();
     }
 
     public ContractDTO create(int customerId, boolean isPreview) {
@@ -57,9 +68,9 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         final CustomerDTO customerDTO = CustomerBuilder.fromEntity(optionalCustomer.get());
 
         final ContractValidityResponse checkValidity = checkValidContractExists(customerId);
-        if (checkValidity.isValid()) {
+        if (checkValidity.getContract() != null) {
             LOGGER.error("Customer with id: {} already have an active contract until {}.", customerId, checkValidity.getContract().getEndDate());
-            throw new ContractException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContract().getEndDate(), HttpStatus.CONFLICT);
+            throw new CustomException("Customer with id: " + customerId + " already have an active contract until " + checkValidity.getContract().getEndDate(), HttpStatus.CONFLICT);
         }
 
         final ContractDTO contractDTO = new ContractDTO();
@@ -75,6 +86,9 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         contractDTO.setEndDate(calendar.getTime());
 
         final String type = customerDTO.getType().getName();
+
+        contractDTO.setCustomerType(customerDTO.getType());
+
         final Optional<Tax> optionalTax = taxRepository.findByType(type);
 
         if (optionalTax.isEmpty()) {
@@ -84,7 +98,11 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
 
         final TaxDTO taxDTO = TaxBuilder.fromEntity(optionalTax.get());
 
-        contractDTO.setValue(taxDTO.getValue());
+        final double total = taxDTO.getValue();
+        final double monthly = total / 12;
+
+        contractDTO.setTotal(total);
+        contractDTO.setMonthly(monthly);
 
         if (!isPreview) {
             Contract contract = ContractBuilder.fromDTO(contractDTO);

@@ -1,4 +1,4 @@
-package com.example.complexnatatie.dtos;
+package com.example.complexnatatie.controllers.handlers.request;
 
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import lombok.*;
@@ -10,18 +10,14 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class PaymentDTO {
+public class PaymentRequest {
 
-    private int id;
+    private int months;
 
-    private Date date;
-
-    private double value;
+    private int customerId;
 
     private String description;
 
     private PaymentType type;
-
-    private int customerId;
 
 }

@@ -1,8 +1,10 @@
 package com.example.complexnatatie.builders;
 
+import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.PaymentDTO;
 import com.example.complexnatatie.entities.Payment;
-import com.example.complexnatatie.builders.helpers.PaymentType;
+import com.example.complexnatatie.entities.PaymentCash;
+import com.example.complexnatatie.entities.PaymentPos;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -14,14 +16,11 @@ public class PaymentBuilder {
     public static PaymentDTO fromEntity(Payment payment) {
         return PaymentDTO.builder()
                 .id(payment.getId())
-
-                .number(payment.getNumber())
                 .date(payment.getDate())
                 .value(payment.getValue())
                 .type(new PaymentType(payment.getType()))
                 .description(payment.getDescription())
                 .customerId(payment.getCustomerId())
-
                 .build();
     }
 
@@ -30,14 +29,29 @@ public class PaymentBuilder {
     }
 
     public static Payment fromDTO(PaymentDTO paymentDTO) {
-        return Payment.builder()
-                .id(paymentDTO.getId())
-                .number(paymentDTO.getNumber())
-                .date(paymentDTO.getDate())
-                .value(paymentDTO.getValue())
-                .type(paymentDTO.getType().getName())
-                .description(paymentDTO.getDescription())
-                .customerId(paymentDTO.getCustomerId())
-                .build();
+
+        if (paymentDTO.getType().getName().equals(PaymentType.POS.getName())) {
+
+            return new PaymentPos(
+                    paymentDTO.getId(),
+                    paymentDTO.getDate(),
+                    paymentDTO.getValue(),
+                    paymentDTO.getDescription(),
+                    paymentDTO.getType().getName(),
+                    paymentDTO.getCustomerId()
+            );
+
+        }
+
+
+        return new PaymentCash(
+                paymentDTO.getId(),
+                paymentDTO.getDate(),
+                paymentDTO.getValue(),
+                paymentDTO.getDescription(),
+                paymentDTO.getType().getName(),
+                paymentDTO.getCustomerId()
+        );
     }
+
 }

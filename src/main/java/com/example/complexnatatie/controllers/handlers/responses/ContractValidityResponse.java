@@ -10,15 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ContractValidityResponse extends CustomResponse {
-
-    private boolean valid;
-
+public class ContractValidityResponse {
     private ContractDTO contract;
-
-    public ContractValidityResponse(String message, boolean valid, ContractDTO contract) {
-        super(message);
-        this.valid = valid;
-        this.contract = contract;
-    }
 }
