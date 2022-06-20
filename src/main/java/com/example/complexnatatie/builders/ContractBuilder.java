@@ -1,5 +1,6 @@
 package com.example.complexnatatie.builders;
 
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,11 @@ public class ContractBuilder {
     public static ContractDTO fromEntity(Contract contract) {
         return ContractDTO.builder()
                 .id(contract.getId())
-                .number(contract.getNumber())
                 .startDate(contract.getStartDate())
                 .endDate(contract.getEndDate())
-                .value(contract.getValue())
+                .monthly(contract.getMonthly())
+                .total(contract.getTotal())
+                .customerType(new CustomerType(contract.getCustomerType()))
                 .customerId(contract.getCustomerId())
                 .build();
     }
@@ -28,10 +30,11 @@ public class ContractBuilder {
     public static Contract fromDTO(ContractDTO contractDTO) {
         return Contract.builder()
                 .id(contractDTO.getId())
-                .number(contractDTO.getNumber())
                 .startDate(contractDTO.getStartDate())
                 .endDate(contractDTO.getEndDate())
-                .value(contractDTO.getValue())
+                .monthly(contractDTO.getMonthly())
+                .total(contractDTO.getTotal())
+                .customerType(contractDTO.getCustomerType().getName())
                 .customerId(contractDTO.getCustomerId())
                 .build();
     }

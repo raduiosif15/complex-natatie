@@ -15,12 +15,18 @@ public class SubscriptionBuilder {
                 .id(subscription.getId())
                 .startDate(subscription.getStartDate())
                 .endDate(subscription.getEndDate())
-                .customerId(subscription.getCustomerId())
+                .contractId(subscription.getContractId())
                 .build();
     }
 
     public static List<SubscriptionDTO> fromEntities(List<Subscription> subscriptions) {
-        return subscriptions.stream().map(SubscriptionBuilder::fromEntity).collect(Collectors.toList());
+        // dates cannot be equals
+        //noinspection ComparatorMethodParameterNotUsed
+        return subscriptions
+                .stream()
+                .map(SubscriptionBuilder::fromEntity)
+                .sorted((s1, s2) -> s1.getStartDate().after(s2.getStartDate()) ? -1 : 1)
+                .collect(Collectors.toList());
     }
 
     public static Subscription fromDTO(SubscriptionDTO subscriptionDTO) {
@@ -28,7 +34,7 @@ public class SubscriptionBuilder {
                 .id(subscriptionDTO.getId())
                 .startDate(subscriptionDTO.getStartDate())
                 .endDate(subscriptionDTO.getEndDate())
-                .customerId(subscriptionDTO.getCustomerId())
+                .contractId(subscriptionDTO.getContractId())
                 .build();
     }
 }

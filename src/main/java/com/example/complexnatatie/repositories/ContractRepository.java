@@ -15,4 +15,9 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
             "ORDER BY contract.endDate DESC ")
     Optional<Contract> getActiveContractByCustomerId(int customerId);
 
+    @Query("SELECT contract " +
+            "FROM Contract contract " +
+            "WHERE contract.id = :id ")
+    Optional<Contract> getById(int id);
+
 }

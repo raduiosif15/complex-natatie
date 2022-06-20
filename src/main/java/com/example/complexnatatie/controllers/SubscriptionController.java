@@ -23,4 +23,10 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscriptionService.findActiveByCustomerId(customerId), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/unpaid/{contractId}")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Integer> getContractMonthsLeftUnpaid(@PathVariable int contractId) {
+        return new ResponseEntity<>(subscriptionService.getContractMonthsLeftUnpaid(contractId), HttpStatus.OK);
+    }
+
 }
