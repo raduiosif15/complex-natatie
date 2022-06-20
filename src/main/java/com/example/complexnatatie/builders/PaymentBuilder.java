@@ -30,12 +30,8 @@ public class PaymentBuilder {
 
     public static Payment fromDTO(PaymentDTO paymentDTO) {
 
-        System.out.println("payment type: " + paymentDTO.getType().getName());
-        System.out.println("payment equals: " + paymentDTO.getType().equals(PaymentType.POS));
-
         if (paymentDTO.getType().getName().equals(PaymentType.POS.getName())) {
 
-            System.out.println("payment type: " + paymentDTO.getType().getName());
             return new PaymentPos(
                     paymentDTO.getId(),
                     paymentDTO.getDate(),

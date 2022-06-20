@@ -33,7 +33,6 @@ public class CustomerController {
     @PostMapping
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> add(@RequestBody CustomerDTO customerDTO) {
-        System.out.println("customer dto: " + customerDTO);
         return new ResponseEntity<>(customerService.save(customerDTO), HttpStatus.CREATED);
     }
 
