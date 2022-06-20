@@ -1,8 +1,10 @@
 package com.example.complexnatatie.builders;
 
+import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.PaymentDTO;
 import com.example.complexnatatie.entities.Payment;
-import com.example.complexnatatie.builders.helpers.PaymentType;
+import com.example.complexnatatie.entities.PaymentCash;
+import com.example.complexnatatie.entities.PaymentPos;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -19,7 +21,6 @@ public class PaymentBuilder {
                 .type(new PaymentType(payment.getType()))
                 .description(payment.getDescription())
                 .customerId(payment.getCustomerId())
-
                 .build();
     }
 
@@ -28,13 +29,33 @@ public class PaymentBuilder {
     }
 
     public static Payment fromDTO(PaymentDTO paymentDTO) {
-        return Payment.builder()
-                .id(paymentDTO.getId())
-                .date(paymentDTO.getDate())
-                .value(paymentDTO.getValue())
-                .type(paymentDTO.getType().getName())
-                .description(paymentDTO.getDescription())
-                .customerId(paymentDTO.getCustomerId())
-                .build();
+
+        System.out.println("payment type: " + paymentDTO.getType().getName());
+        System.out.println("payment equals: " + paymentDTO.getType().equals(PaymentType.POS));
+
+        if (paymentDTO.getType().getName().equals(PaymentType.POS.getName())) {
+
+            System.out.println("payment type: " + paymentDTO.getType().getName());
+            return new PaymentPos(
+                    paymentDTO.getId(),
+                    paymentDTO.getDate(),
+                    paymentDTO.getValue(),
+                    paymentDTO.getDescription(),
+                    paymentDTO.getType().getName(),
+                    paymentDTO.getCustomerId()
+            );
+
+        }
+
+
+        return new PaymentCash(
+                paymentDTO.getId(),
+                paymentDTO.getDate(),
+                paymentDTO.getValue(),
+                paymentDTO.getDescription(),
+                paymentDTO.getType().getName(),
+                paymentDTO.getCustomerId()
+        );
     }
+
 }

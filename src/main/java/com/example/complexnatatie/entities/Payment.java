@@ -5,13 +5,13 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
-public class Payment {
+@ToString
+@MappedSuperclass
+public abstract class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

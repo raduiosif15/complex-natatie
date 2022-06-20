@@ -14,8 +14,6 @@ public class PaymentDTO {
 
     private int id;
 
-    private int number;
-
     private Date date;
 
     private double value;
@@ -25,6 +23,5 @@ public class PaymentDTO {
     private PaymentType type;
 
     private int customerId;
-
 
 }

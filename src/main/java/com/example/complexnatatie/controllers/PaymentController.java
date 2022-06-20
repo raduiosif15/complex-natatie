@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,12 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<PaymentDTO>> getAll() {
         return new ResponseEntity<>(paymentService.getAll(), HttpStatus.OK);
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<PaymentDTO> pay(@RequestBody PaymentDTO paymentDTO) {
+        return new ResponseEntity<>(paymentService.pay(paymentDTO), HttpStatus.OK);
     }
 
 }
