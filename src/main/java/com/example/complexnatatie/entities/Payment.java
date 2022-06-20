@@ -17,9 +17,6 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "number", nullable = false)
-    private int number;
-
     @Column(name = "date", nullable = false)
     private Date date;
 

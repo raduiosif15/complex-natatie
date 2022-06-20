@@ -17,17 +17,20 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "number", nullable = false)
-    private int number;
-
     @Column(name = "start_date", nullable = false)
     private Date startDate;
 
     @Column(name = "end_date", nullable = false)
     private Date endDate;
 
-    @Column(name = "value", nullable = false)
-    private double value;
+    @Column(name = "monthly", nullable = false)
+    private double monthly;
+
+    @Column(name = "total", nullable = false)
+    private double total;
+
+    @Column(name = "customer_type", nullable = false)
+    private String customerType;
 
     @Column(name = "customer_id", nullable = false)
     private int customerId;

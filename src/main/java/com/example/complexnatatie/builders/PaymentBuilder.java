@@ -14,8 +14,6 @@ public class PaymentBuilder {
     public static PaymentDTO fromEntity(Payment payment) {
         return PaymentDTO.builder()
                 .id(payment.getId())
-
-                .number(payment.getNumber())
                 .date(payment.getDate())
                 .value(payment.getValue())
                 .type(new PaymentType(payment.getType()))
@@ -32,7 +30,6 @@ public class PaymentBuilder {
     public static Payment fromDTO(PaymentDTO paymentDTO) {
         return Payment.builder()
                 .id(paymentDTO.getId())
-                .number(paymentDTO.getNumber())
                 .date(paymentDTO.getDate())
                 .value(paymentDTO.getValue())
                 .type(paymentDTO.getType().getName())

@@ -75,6 +75,9 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         contractDTO.setEndDate(calendar.getTime());
 
         final String type = customerDTO.getType().getName();
+
+        contractDTO.setCustomerType(customerDTO.getType());
+
         final Optional<Tax> optionalTax = taxRepository.findByType(type);
 
         if (optionalTax.isEmpty()) {
@@ -84,7 +87,11 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
 
         final TaxDTO taxDTO = TaxBuilder.fromEntity(optionalTax.get());
 
-        contractDTO.setValue(taxDTO.getValue());
+        final double total = taxDTO.getValue();
+        final double monthly = total / 12;
+
+        contractDTO.setTotal(total);
+        contractDTO.setMonthly(monthly);
 
         if (!isPreview) {
             Contract contract = ContractBuilder.fromDTO(contractDTO);
