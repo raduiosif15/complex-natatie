@@ -2,10 +2,12 @@ package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
-import com.example.complexnatatie.controllers.handlers.exceptions.ContractException;
+import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.PaymentDTO;
+import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Payment;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
@@ -25,7 +27,8 @@ import java.util.List;
 public record PaymentService(PaymentRepository paymentRepository,
                              PaymentPosRepository paymentPosRepository,
                              PaymentCashRepository paymentCashRepository,
-                             ContractService contractService) {
+                             ContractService contractService,
+                             SubscriptionService subscriptionService) {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
@@ -40,7 +43,9 @@ public record PaymentService(PaymentRepository paymentRepository,
         return PaymentBuilder.fromEntities(allPayments);
     }
 
-    public PaymentDTO pay(PaymentRequest paymentRequest) {
+    public PaymentResponse pay(PaymentRequest paymentRequest) {
+
+        final PaymentResponse paymentResponse = new PaymentResponse();
 
         final int customerId = paymentRequest.getCustomerId();
         final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
@@ -48,15 +53,28 @@ public record PaymentService(PaymentRepository paymentRepository,
         if (contractDTO == null) {
 
             LOGGER.error("Customer with id: {} haven't got any active contract.", customerId);
-            throw new ContractException("Customer with id: " + customerId + " haven't got any active contract.", HttpStatus.NOT_FOUND);
+            throw new CustomException("Customer with id: " + customerId + " haven't got any active contract.", HttpStatus.NOT_FOUND);
 
         }
 
-        final Date date = new Date();
-        final double value = paymentRequest.getMonths() * contractDTO.getMonthly();
+        // deny payment for more than 12 months or subscription over contractual interval
+        final int monthsToPay = paymentRequest.getMonths();
 
-        // todo: deny payment for more than 12 months or subscription over contractual interval
-        // todo: create subscription
+        if (monthsToPay > 12 || monthsToPay > subscriptionService.getContractMonthsLeftUnpaid(contractDTO.getId())) {
+
+            LOGGER.error("Payment exceeds the contractual period");
+            throw new CustomException("Payment exceeds the contractual period", HttpStatus.NOT_ACCEPTABLE);
+
+        }
+
+
+        final Date date = new Date();
+        final double value = monthsToPay * contractDTO.getMonthly();
+
+        // create/extend subscription
+        final SubscriptionDTO subscriptionDTO = subscriptionService.createOrExtendSubscription(contractDTO.getId(), monthsToPay);
+
+        paymentResponse.setSubscription(subscriptionDTO);
 
         if (paymentRequest.getType().getName().equals(PaymentType.POS.getName())) {
 
@@ -70,7 +88,8 @@ public record PaymentService(PaymentRepository paymentRepository,
             );
 
             paymentPos = paymentRepository.save(paymentPos);
-            return PaymentBuilder.fromEntity(paymentPos);
+            paymentResponse.setPayment(PaymentBuilder.fromEntity(paymentPos));
+            return paymentResponse;
 
         }
 
@@ -84,7 +103,9 @@ public record PaymentService(PaymentRepository paymentRepository,
         );
 
         paymentCash = paymentRepository.save(paymentCash);
-        return PaymentBuilder.fromEntity(paymentCash);
+        paymentResponse.setPayment(PaymentBuilder.fromEntity(paymentCash));
+        return paymentResponse;
 
     }
+
 }

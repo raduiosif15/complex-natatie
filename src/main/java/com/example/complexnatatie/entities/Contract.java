@@ -1,9 +1,12 @@
 package com.example.complexnatatie.entities;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -34,5 +37,10 @@ public class Contract {
 
     @Column(name = "customer_id", nullable = false)
     private int customerId;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "contract_id", referencedColumnName = "id")
+    private List<Subscription> subscriptions;
 
 }
