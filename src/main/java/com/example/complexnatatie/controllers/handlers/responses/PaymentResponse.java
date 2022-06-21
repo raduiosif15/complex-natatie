@@ -15,4 +15,6 @@ public class PaymentResponse {
 
     private PaymentDTO payment;
 
+    private boolean subscriptionCreated;
+
 }

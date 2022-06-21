@@ -43,9 +43,30 @@ public record PaymentService(PaymentRepository paymentRepository,
         return PaymentBuilder.fromEntities(allPayments);
     }
 
-    public PaymentResponse pay(PaymentRequest paymentRequest) {
+    public double preview(int customerId, int months) {
 
-        final PaymentResponse paymentResponse = new PaymentResponse();
+        final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
+
+        if (contractDTO == null) {
+
+            LOGGER.error("Customer with id: {} haven't got any active contract.", customerId);
+            throw new CustomException("Customer with id: " + customerId + " haven't got any active contract.", HttpStatus.NOT_FOUND);
+
+        }
+
+        if (months > 12 || months > subscriptionService.getMonthsLeftUnpaid(contractDTO.getCustomerId())) {
+
+            LOGGER.error("Payment exceeds the contractual period");
+            throw new CustomException("Payment exceeds the contractual period", HttpStatus.NOT_ACCEPTABLE);
+
+        }
+
+        return months * contractDTO.getMonthly();
+
+    }
+
+
+    public PaymentResponse pay(PaymentRequest paymentRequest) {
 
         final int customerId = paymentRequest.getCustomerId();
         final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
@@ -60,7 +81,7 @@ public record PaymentService(PaymentRepository paymentRepository,
         // deny payment for more than 12 months or subscription over contractual interval
         final int monthsToPay = paymentRequest.getMonths();
 
-        if (monthsToPay > 12 || monthsToPay > subscriptionService.getContractMonthsLeftUnpaid(contractDTO.getId())) {
+        if (monthsToPay > 12 || monthsToPay > subscriptionService.getMonthsLeftUnpaid(contractDTO.getCustomerId())) {
 
             LOGGER.error("Payment exceeds the contractual period");
             throw new CustomException("Payment exceeds the contractual period", HttpStatus.NOT_ACCEPTABLE);
@@ -72,9 +93,7 @@ public record PaymentService(PaymentRepository paymentRepository,
         final double value = monthsToPay * contractDTO.getMonthly();
 
         // create/extend subscription
-        final SubscriptionDTO subscriptionDTO = subscriptionService.createOrExtendSubscription(contractDTO.getId(), monthsToPay);
-
-        paymentResponse.setSubscription(subscriptionDTO);
+        final PaymentResponse paymentResponse = subscriptionService.createOrExtendSubscription(contractDTO.getId(), monthsToPay);
 
         if (paymentRequest.getType().getName().equals(PaymentType.POS.getName())) {
 

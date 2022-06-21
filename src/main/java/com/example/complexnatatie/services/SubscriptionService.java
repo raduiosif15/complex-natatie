@@ -2,6 +2,7 @@ package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.SubscriptionBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
+import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.controllers.handlers.responses.SubscriptionResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.SubscriptionDTO;
@@ -51,11 +52,11 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
 
     }
 
-    public int getContractMonthsLeftUnpaid(int contractId) {
+    public int getMonthsLeftUnpaid(int customerId) {
 
-        final ContractDTO contractDTO = contractService.getById(contractId);
+        final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
 
-        final SubscriptionDTO lastActiveSubscription = getLastActiveSubscription(contractId);
+        final SubscriptionDTO lastActiveSubscription = getLastActiveSubscription(contractDTO.getId());
 
         final LocalDate contractEndDate = new java.sql.Date(contractDTO.getEndDate().getTime()).toLocalDate();
         final LocalDate subscriptionEndDate = new java.sql.Date(
@@ -70,7 +71,9 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
 
     }
 
-    public SubscriptionDTO createOrExtendSubscription(int contractId, int months) {
+    public PaymentResponse createOrExtendSubscription(int contractId, int months) {
+
+        PaymentResponse paymentResponse = new PaymentResponse();
 
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
@@ -95,7 +98,9 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
                 Subscription subscription = SubscriptionBuilder.fromDTO(lastActiveSubscription);
                 subscription = subscriptionRepository.save(subscription);
 
-                return SubscriptionBuilder.fromEntity(subscription);
+                paymentResponse.setSubscription(SubscriptionBuilder.fromEntity(subscription));
+                paymentResponse.setSubscriptionCreated(false);
+                return paymentResponse;
             }
 
         }
@@ -114,7 +119,9 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
 
         subscription = subscriptionRepository.save(subscription);
 
-        return SubscriptionBuilder.fromEntity(subscription);
+        paymentResponse.setSubscription(SubscriptionBuilder.fromEntity(subscription));
+        paymentResponse.setSubscriptionCreated(true);
+        return paymentResponse;
 
     }
 
