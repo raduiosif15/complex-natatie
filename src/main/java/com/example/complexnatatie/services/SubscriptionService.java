@@ -6,8 +6,6 @@ import com.example.complexnatatie.controllers.handlers.responses.SubscriptionRes
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Subscription;
 import com.example.complexnatatie.repositories.SubscriptionRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

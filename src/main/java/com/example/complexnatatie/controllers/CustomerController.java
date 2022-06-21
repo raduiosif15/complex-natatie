@@ -24,10 +24,10 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{name}")
+    @GetMapping(value = "/{nameOrCodeID}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<CustomerDTO>> getByName(@PathVariable String name) {
-        return new ResponseEntity<>(customerService.getByName(name), HttpStatus.OK);
+    public ResponseEntity<List<CustomerDTO>> getByNameOrCodeID(@PathVariable String nameOrCodeID) {
+        return new ResponseEntity<>(customerService.getByNameOrCodeID(nameOrCodeID), HttpStatus.OK);
     }
 
     @PostMapping
