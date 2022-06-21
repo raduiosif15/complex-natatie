@@ -13,7 +13,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
     @Query(value = "SELECT subscription " +
             "FROM Subscription subscription " +
             "WHERE subscription.customerId = :customerId " +
-            "AND ((subscription.startDate <= CURRENT_DATE) AND (subscription.endDate >= CURRENT_DATE)) ")
+            "AND subscription.endDate >= CURRENT_DATE ")
     Optional<Subscription> findActiveByCustomerId(int customerId);
 
 }
