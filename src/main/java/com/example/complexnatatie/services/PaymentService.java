@@ -7,7 +7,6 @@ import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.PaymentDTO;
-import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Payment;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
@@ -54,7 +53,7 @@ public record PaymentService(PaymentRepository paymentRepository,
 
         }
 
-        if (months > 12 || months > subscriptionService.getMonthsLeftUnpaid(contractDTO.getCustomerId())) {
+        if (months > 12 || months > subscriptionService.getMonthsLeftUnpaid(customerId)) {
 
             LOGGER.error("Payment exceeds the contractual period");
             throw new CustomException("Payment exceeds the contractual period", HttpStatus.NOT_ACCEPTABLE);
@@ -81,7 +80,7 @@ public record PaymentService(PaymentRepository paymentRepository,
         // deny payment for more than 12 months or subscription over contractual interval
         final int monthsToPay = paymentRequest.getMonths();
 
-        if (monthsToPay > 12 || monthsToPay > subscriptionService.getMonthsLeftUnpaid(contractDTO.getCustomerId())) {
+        if (monthsToPay > 12 || monthsToPay > subscriptionService.getMonthsLeftUnpaid(customerId)) {
 
             LOGGER.error("Payment exceeds the contractual period");
             throw new CustomException("Payment exceeds the contractual period", HttpStatus.NOT_ACCEPTABLE);
@@ -93,7 +92,7 @@ public record PaymentService(PaymentRepository paymentRepository,
         final double value = monthsToPay * contractDTO.getMonthly();
 
         // create/extend subscription
-        final PaymentResponse paymentResponse = subscriptionService.createOrExtendSubscription(contractDTO.getId(), monthsToPay);
+        final PaymentResponse paymentResponse = subscriptionService.createOrExtendSubscription(customerId, monthsToPay);
 
         if (paymentRequest.getType().getName().equals(PaymentType.POS.getName())) {
 

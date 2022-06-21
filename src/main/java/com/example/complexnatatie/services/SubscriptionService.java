@@ -1,30 +1,24 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.SubscriptionBuilder;
-import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.controllers.handlers.responses.SubscriptionResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Subscription;
 import com.example.complexnatatie.repositories.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public record SubscriptionService(SubscriptionRepository subscriptionRepository,
                                   ContractService contractService) {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
     public SubscriptionResponse findActiveByCustomerId(int customerId) {
         Optional<Subscription> optionalSubscription = subscriptionRepository.findActiveByCustomerId(customerId);
@@ -36,34 +30,23 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
         return new SubscriptionResponse(SubscriptionBuilder.fromEntity(optionalSubscription.get()));
     }
 
-    public List<SubscriptionDTO> getSubscriptionsByContractId(int contractId) {
-        return SubscriptionBuilder.fromEntities(subscriptionRepository.findSubscriptionsByContractId(contractId));
-    }
-
-    public SubscriptionDTO getLastActiveSubscription(int contractId) {
-
-        final List<SubscriptionDTO> subscriptions = getSubscriptionsByContractId(contractId);
-
-        if (subscriptions.isEmpty()) {
-            return null;
-        }
-
-        return subscriptions.get(subscriptions.size() - 1);
-
-    }
-
     public int getMonthsLeftUnpaid(int customerId) {
 
         final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
 
-        final SubscriptionDTO lastActiveSubscription = getLastActiveSubscription(contractDTO.getId());
+        final Optional<Subscription> optionalSubscription = subscriptionRepository.findActiveByCustomerId(customerId);
+
+        Date date = new Date();
+        if (optionalSubscription.isPresent()) {
+
+            final Subscription subscription = optionalSubscription.get();
+
+            date = subscription.getEndDate();
+
+        }
 
         final LocalDate contractEndDate = new java.sql.Date(contractDTO.getEndDate().getTime()).toLocalDate();
-        final LocalDate subscriptionEndDate = new java.sql.Date(
-                lastActiveSubscription == null
-                        ? (new Date()).getTime()
-                        : lastActiveSubscription.getEndDate().getTime()
-        ).toLocalDate();
+        final LocalDate subscriptionEndDate = new java.sql.Date(date.getTime()).toLocalDate();
 
         return (int) ChronoUnit.MONTHS.between(
                 subscriptionEndDate.withDayOfMonth(1),
@@ -71,44 +54,36 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
 
     }
 
-    public PaymentResponse createOrExtendSubscription(int contractId, int months) {
+    public PaymentResponse createOrExtendSubscription(int customerId, int months) {
 
         PaymentResponse paymentResponse = new PaymentResponse();
 
         final Date date = new Date();
         final Calendar calendar = Calendar.getInstance();
-        final SubscriptionDTO lastActiveSubscription = getLastActiveSubscription(contractId);
+        final Optional<Subscription> optionalSubscription = subscriptionRepository.findActiveByCustomerId(customerId);
+
 
         // if there is an active subscription, we extend that one with x months
-        if (lastActiveSubscription != null) {
+        if (optionalSubscription.isPresent()) {
 
-            if (date.before(lastActiveSubscription.getStartDate())) {
+            Subscription subscription = optionalSubscription.get();
 
-                LOGGER.error("Subscription start date before present");
-                throw new CustomException("Subscription start date before present", HttpStatus.NOT_ACCEPTABLE);
+            calendar.setTime(subscription.getEndDate());
+            calendar.add(Calendar.MONTH, months);
 
-            }
+            subscription.setEndDate(calendar.getTime());
+            subscription = subscriptionRepository.save(subscription);
 
-            if (date.before(lastActiveSubscription.getEndDate())) {
-
-                calendar.setTime(lastActiveSubscription.getEndDate());
-                calendar.add(Calendar.MONTH, months);
-
-                lastActiveSubscription.setEndDate(calendar.getTime());
-                Subscription subscription = SubscriptionBuilder.fromDTO(lastActiveSubscription);
-                subscription = subscriptionRepository.save(subscription);
-
-                paymentResponse.setSubscription(SubscriptionBuilder.fromEntity(subscription));
-                paymentResponse.setSubscriptionCreated(false);
-                return paymentResponse;
-            }
+            paymentResponse.setSubscription(SubscriptionBuilder.fromEntity(subscription));
+            paymentResponse.setSubscriptionCreated(false);
+            return paymentResponse;
 
         }
 
         // else create new subscription from scratch
 
         Subscription subscription = new Subscription();
-        subscription.setContractId(contractId);
+        subscription.setCustomerId(customerId);
         subscription.setStartDate(date);
         calendar.setTime(date);
 

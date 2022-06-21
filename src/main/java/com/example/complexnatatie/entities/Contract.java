@@ -38,9 +38,4 @@ public class Contract {
     @Column(name = "customer_id", nullable = false)
     private int customerId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinColumn(name = "contract_id", referencedColumnName = "id")
-    private List<Subscription> subscriptions;
-
 }

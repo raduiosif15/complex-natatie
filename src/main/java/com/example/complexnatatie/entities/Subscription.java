@@ -23,7 +23,7 @@ public class Subscription {
     @Column(name = "end_date", nullable = false)
     private Date endDate;
 
-    @Column(name = "contract_id", nullable = false)
-    private int contractId;
+    @Column(name = "customer_id", nullable = false)
+    private int customerId;
 
 }
