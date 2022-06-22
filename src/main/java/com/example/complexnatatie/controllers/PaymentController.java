@@ -1,5 +1,6 @@
 package com.example.complexnatatie.controllers;
 
+import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.PaymentDTO;
@@ -20,12 +21,6 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentDTO>> getAll() {
-        return new ResponseEntity<>(paymentService.getAll(), HttpStatus.OK);
-    }
-
     @GetMapping("/preview/{customerId}/{months}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Double> preview(@PathVariable int customerId, @PathVariable int months) {
@@ -36,6 +31,18 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<PaymentResponse> pay(@RequestBody PaymentRequest paymentRequest) {
         return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/daily")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentDTO>> getDaily(@RequestBody ReportRequest reportRequest) {
+        return new ResponseEntity<>(paymentService.getDaily(reportRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/monthly")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentDTO>> getMonthly(@RequestBody ReportRequest reportRequest) {
+        return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
     }
 
 }

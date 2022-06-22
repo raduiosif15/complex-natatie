@@ -3,6 +3,7 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
+import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,17 +32,6 @@ public record PaymentService(PaymentRepository paymentRepository,
                              SubscriptionService subscriptionService) {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
-
-    // todo: delete this
-    public List<PaymentDTO> getAll() {
-
-        final List<Payment> allPayments = new ArrayList<>();
-
-        allPayments.addAll(paymentPosRepository.findAll());
-        allPayments.addAll(paymentCashRepository.findAll());
-
-        return PaymentBuilder.fromEntities(allPayments);
-    }
 
     public double preview(int customerId, int months) {
 
@@ -126,4 +117,55 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     }
 
+    public List<PaymentDTO> getDaily(ReportRequest reportRequest) {
+
+        final List<Payment> allPayments = new ArrayList<>();
+
+        final Date dateFromRequest = reportRequest.getDate();
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateFromRequest);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        final Date startDate = calendar.getTime();
+
+        calendar.add(Calendar.DATE, 1);
+        calendar.add(Calendar.SECOND, -1);
+        final Date endDate = calendar.getTime();
+
+
+        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
+        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+
+        return PaymentBuilder.fromEntities(allPayments);
+
+    }
+
+    public List<PaymentDTO> getMonthly(ReportRequest reportRequest) {
+
+        final List<Payment> allPayments = new ArrayList<>();
+
+        final Date dateFromRequest = reportRequest.getDate();
+
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateFromRequest);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        final Date startDate = calendar.getTime();
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.SECOND, -1);
+
+        final Date endDate = calendar.getTime();
+
+        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
+        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+
+        return PaymentBuilder.fromEntities(allPayments);
+
+    }
 }
