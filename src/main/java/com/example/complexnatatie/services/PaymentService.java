@@ -1,5 +1,6 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
@@ -8,6 +9,8 @@ import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.PaymentDTO;
+import com.example.complexnatatie.dtos.PaymentWithCustomer;
+import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Payment;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
@@ -134,9 +137,25 @@ public record PaymentService(PaymentRepository paymentRepository,
         calendar.add(Calendar.SECOND, -1);
         final Date endDate = calendar.getTime();
 
+        final List<Object[]> objects = paymentCashRepository.findByDate2(startDate, endDate);
 
-        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
-        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+
+        for (Object[] objDetails: objects) {
+
+            final PaymentWithCustomer paymentWithCustomer = new PaymentWithCustomer();
+
+            paymentWithCustomer.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
+            paymentWithCustomer.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+
+
+        }
+
+        System.out.println("paymentWithCashList: " + paymentWithCustomerList.toString());
+
+//
+//        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
+//        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
 
         return PaymentBuilder.fromEntities(allPayments);
 
