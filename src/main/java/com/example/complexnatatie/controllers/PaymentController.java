@@ -1,5 +1,6 @@
 package com.example.complexnatatie.controllers;
 
+import com.example.complexnatatie.controllers.handlers.request.CustomReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
@@ -44,6 +45,12 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<PaymentWithCustomer>> getMonthly(@RequestBody ReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/custom")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentWithCustomer>> getCustom(@RequestBody CustomReportRequest reportRequest) {
+        return new ResponseEntity<>(paymentService.getCustom(reportRequest), HttpStatus.OK);
     }
 
 }

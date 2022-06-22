@@ -3,6 +3,7 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
+import com.example.complexnatatie.controllers.handlers.request.CustomReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
@@ -173,5 +174,38 @@ public record PaymentService(PaymentRepository paymentRepository,
 
         return paymentWithCustomerList;
 
+    }
+
+    public List<PaymentWithCustomer> getCustom(CustomReportRequest reportRequest) {
+        Date startDate = reportRequest.getStartDate();
+        Date endDate = reportRequest.getEndDate();
+
+        final Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(startDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        startDate = calendar.getTime();
+
+
+        calendar.setTime(endDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DATE, 1);
+        calendar.add(Calendar.SECOND, -1);
+        endDate = calendar.getTime();
+
+        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
+
+
+        return paymentWithCustomerList;
     }
 }
