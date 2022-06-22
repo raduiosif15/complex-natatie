@@ -40,7 +40,11 @@ public class PaymentBuilder {
 
         }
 
-        return paymentForReportList;
+        //noinspection ComparatorMethodParameterNotUsed
+        return paymentForReportList
+                .stream()
+                .sorted((p1, p2) -> p1.getPayment().getDate().after(p2.getPayment().getDate()) ? 1 : -1)
+                .toList();
     }
 
 }
