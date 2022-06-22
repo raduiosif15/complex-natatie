@@ -34,19 +34,19 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping("/daily")
+    @PostMapping("/daily")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<PaymentForReport>> getDaily(@RequestBody ReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getDaily(reportRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/monthly")
+    @PostMapping("/monthly")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<PaymentForReport>> getMonthly(@RequestBody ReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/custom")
+    @PostMapping("/custom")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<PaymentForReport>> getCustom(@RequestBody CustomReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getCustom(reportRequest), HttpStatus.OK);
