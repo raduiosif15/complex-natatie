@@ -2,16 +2,14 @@ package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.PaymentDTO;
-import com.example.complexnatatie.dtos.PaymentWithCustomer;
+import com.example.complexnatatie.dtos.PaymentForReport;
+import com.example.complexnatatie.entities.Contract;
 import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Payment;
-import com.example.complexnatatie.entities.PaymentCash;
-import com.example.complexnatatie.entities.PaymentPos;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class PaymentBuilder {
@@ -27,25 +25,22 @@ public class PaymentBuilder {
                 .build();
     }
 
-    public static List<PaymentDTO> fromEntities(List<Payment> payments) {
-        return payments.stream().map(PaymentBuilder::fromEntity).collect(Collectors.toList());
-    }
-
-    public static List<PaymentWithCustomer> fromObjects(List<Object[]> objects) {
-        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+    public static List<PaymentForReport> fromObjects(List<Object[]> objects) {
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
         for (Object[] objDetails : objects) {
 
-            final PaymentWithCustomer paymentWithCustomer = new PaymentWithCustomer();
+            final PaymentForReport paymentForReport = new PaymentForReport();
 
-            paymentWithCustomer.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
-            paymentWithCustomer.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+            paymentForReport.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
+            paymentForReport.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+            paymentForReport.setContract(ContractBuilder.fromEntity((Contract) (objDetails[2])));
 
-            paymentWithCustomerList.add(paymentWithCustomer);
+            paymentForReportList.add(paymentForReport);
 
         }
 
-        return paymentWithCustomerList;
+        return paymentForReportList;
     }
 
 }

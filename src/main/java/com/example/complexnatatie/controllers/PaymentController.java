@@ -4,8 +4,7 @@ import com.example.complexnatatie.controllers.handlers.request.CustomReportReque
 import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
-import com.example.complexnatatie.dtos.PaymentDTO;
-import com.example.complexnatatie.dtos.PaymentWithCustomer;
+import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,19 +36,19 @@ public class PaymentController {
 
     @GetMapping("/daily")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentWithCustomer>> getDaily(@RequestBody ReportRequest reportRequest) {
+    public ResponseEntity<List<PaymentForReport>> getDaily(@RequestBody ReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getDaily(reportRequest), HttpStatus.OK);
     }
 
     @GetMapping("/monthly")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentWithCustomer>> getMonthly(@RequestBody ReportRequest reportRequest) {
+    public ResponseEntity<List<PaymentForReport>> getMonthly(@RequestBody ReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
     }
 
     @GetMapping("/custom")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentWithCustomer>> getCustom(@RequestBody CustomReportRequest reportRequest) {
+    public ResponseEntity<List<PaymentForReport>> getCustom(@RequestBody CustomReportRequest reportRequest) {
         return new ResponseEntity<>(paymentService.getCustom(reportRequest), HttpStatus.OK);
     }
 

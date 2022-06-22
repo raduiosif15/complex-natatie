@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface PaymentCashRepository extends JpaRepository<PaymentCash, Integer> {
 
-    @Query(value = "SELECT payment, customer " +
+    @Query(value = "SELECT payment, customer, contract " +
             "FROM PaymentCash payment " +
-            "JOIN Customer customer ON customer.id = payment.id " +
+            "JOIN Customer customer ON customer.id = payment.customerId " +
+            "JOIN Contract contract ON contract.customerId = payment.customerId " +
             "WHERE payment.date >= :startDate AND payment.date <= :endDate ")
     List<Object[]> findByDate(Date startDate, Date endDate);
 

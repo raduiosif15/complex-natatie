@@ -8,7 +8,7 @@ import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.PaymentWithCustomer;
+import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
 import com.example.complexnatatie.repositories.PaymentCashRepository;
@@ -117,7 +117,7 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     }
 
-    public List<PaymentWithCustomer> getDaily(ReportRequest reportRequest) {
+    public List<PaymentForReport> getDaily(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -132,20 +132,20 @@ public record PaymentService(PaymentRepository paymentRepository,
         calendar.add(Calendar.SECOND, -1);
         final Date endDate = calendar.getTime();
 
-        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
 
 
-        return paymentWithCustomerList;
+        return paymentForReportList;
 
     }
 
-    public List<PaymentWithCustomer> getMonthly(ReportRequest reportRequest) {
+    public List<PaymentForReport> getMonthly(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -163,20 +163,20 @@ public record PaymentService(PaymentRepository paymentRepository,
 
         final Date endDate = calendar.getTime();
 
-        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
 
 
-        return paymentWithCustomerList;
+        return paymentForReportList;
 
     }
 
-    public List<PaymentWithCustomer> getCustom(CustomReportRequest reportRequest) {
+    public List<PaymentForReport> getCustom(CustomReportRequest reportRequest) {
         Date startDate = reportRequest.getStartDate();
         Date endDate = reportRequest.getEndDate();
 
@@ -197,15 +197,15 @@ public record PaymentService(PaymentRepository paymentRepository,
         calendar.add(Calendar.SECOND, -1);
         endDate = calendar.getTime();
 
-        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
-        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
 
 
-        return paymentWithCustomerList;
+        return paymentForReportList;
     }
 }

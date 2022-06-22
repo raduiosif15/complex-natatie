@@ -1,6 +1,5 @@
 package com.example.complexnatatie.dtos;
 
-import com.example.complexnatatie.entities.Customer;
 import lombok.*;
 
 @NoArgsConstructor
@@ -8,10 +7,12 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class PaymentWithCustomer {
+public class PaymentForReport {
 
     private PaymentDTO payment;
 
     private CustomerDTO customer;
+
+    private ContractDTO contract;
 
 }
