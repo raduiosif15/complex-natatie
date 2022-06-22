@@ -1,17 +1,13 @@
 package com.example.complexnatatie.services;
 
-import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
-import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.PaymentDTO;
 import com.example.complexnatatie.dtos.PaymentWithCustomer;
-import com.example.complexnatatie.entities.Customer;
-import com.example.complexnatatie.entities.Payment;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
 import com.example.complexnatatie.repositories.PaymentCashRepository;
@@ -120,9 +116,7 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     }
 
-    public List<PaymentDTO> getDaily(ReportRequest reportRequest) {
-
-        final List<Payment> allPayments = new ArrayList<>();
+    public List<PaymentWithCustomer> getDaily(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -137,33 +131,20 @@ public record PaymentService(PaymentRepository paymentRepository,
         calendar.add(Calendar.SECOND, -1);
         final Date endDate = calendar.getTime();
 
-        final List<Object[]> objects = paymentCashRepository.findByDate2(startDate, endDate);
-
         final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
 
-        for (Object[] objDetails: objects) {
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
-            final PaymentWithCustomer paymentWithCustomer = new PaymentWithCustomer();
-
-            paymentWithCustomer.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
-            paymentWithCustomer.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
 
 
-        }
-
-        System.out.println("paymentWithCashList: " + paymentWithCustomerList.toString());
-
-//
-//        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
-//        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
-
-        return PaymentBuilder.fromEntities(allPayments);
+        return paymentWithCustomerList;
 
     }
 
-    public List<PaymentDTO> getMonthly(ReportRequest reportRequest) {
-
-        final List<Payment> allPayments = new ArrayList<>();
+    public List<PaymentWithCustomer> getMonthly(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -181,10 +162,16 @@ public record PaymentService(PaymentRepository paymentRepository,
 
         final Date endDate = calendar.getTime();
 
-        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
-        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
 
-        return PaymentBuilder.fromEntities(allPayments);
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentWithCustomerList.addAll(PaymentBuilder.fromObjects(objectsPos));
+
+
+        return paymentWithCustomerList;
 
     }
 }

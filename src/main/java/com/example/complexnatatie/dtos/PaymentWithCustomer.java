@@ -12,6 +12,6 @@ public class PaymentWithCustomer {
 
     private PaymentDTO payment;
 
-    private Customer customer;
+    private CustomerDTO customer;
 
 }

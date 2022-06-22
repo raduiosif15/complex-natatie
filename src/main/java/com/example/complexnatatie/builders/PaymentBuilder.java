@@ -2,11 +2,14 @@ package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.PaymentDTO;
+import com.example.complexnatatie.dtos.PaymentWithCustomer;
+import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Payment;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,30 +31,21 @@ public class PaymentBuilder {
         return payments.stream().map(PaymentBuilder::fromEntity).collect(Collectors.toList());
     }
 
-    public static Payment fromDTO(PaymentDTO paymentDTO) {
+    public static List<PaymentWithCustomer> fromObjects(List<Object[]> objects) {
+        final List<PaymentWithCustomer> paymentWithCustomerList = new ArrayList<>();
 
-        if (paymentDTO.getType().getName().equals(PaymentType.POS.getName())) {
+        for (Object[] objDetails : objects) {
 
-            return new PaymentPos(
-                    paymentDTO.getId(),
-                    paymentDTO.getDate(),
-                    paymentDTO.getValue(),
-                    paymentDTO.getDescription(),
-                    paymentDTO.getType().getName(),
-                    paymentDTO.getCustomerId()
-            );
+            final PaymentWithCustomer paymentWithCustomer = new PaymentWithCustomer();
+
+            paymentWithCustomer.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
+            paymentWithCustomer.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+
+            paymentWithCustomerList.add(paymentWithCustomer);
 
         }
 
-
-        return new PaymentCash(
-                paymentDTO.getId(),
-                paymentDTO.getDate(),
-                paymentDTO.getValue(),
-                paymentDTO.getDescription(),
-                paymentDTO.getType().getName(),
-                paymentDTO.getCustomerId()
-        );
+        return paymentWithCustomerList;
     }
 
 }
