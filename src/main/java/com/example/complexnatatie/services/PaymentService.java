@@ -16,11 +16,17 @@ import com.example.complexnatatie.repositories.PaymentPosRepository;
 import com.example.complexnatatie.repositories.PaymentRepository;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletContext;
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -28,7 +34,8 @@ public record PaymentService(PaymentRepository paymentRepository,
                              PaymentPosRepository paymentPosRepository,
                              PaymentCashRepository paymentCashRepository,
                              ContractService contractService,
-                             SubscriptionService subscriptionService) {
+                             SubscriptionService subscriptionService,
+                             ServletContext servletContext) {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
@@ -53,7 +60,6 @@ public record PaymentService(PaymentRepository paymentRepository,
         return months * contractDTO.getMonthly();
 
     }
-
 
     public PaymentResponse pay(PaymentRequest paymentRequest) {
 
@@ -168,7 +174,6 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     }
 
-
     public Object sendEmail() {
 
         emailSender("raduiosif15@yahoo.com", "Test", "This is a test email");
@@ -234,5 +239,61 @@ public record PaymentService(PaymentRepository paymentRepository,
         }
 
 
+    }
+
+    public Object xlsxCreate() {
+
+        String serverPath = servletContext.getRealPath("/");
+        File receipts = new File(serverPath + "/receipts.xlsx");
+
+        try {
+
+            FileInputStream fileInputStream = new FileInputStream(receipts);
+            XSSFWorkbook receiptsXLSX = new XSSFWorkbook(fileInputStream);
+
+            // get sheet 0
+            final XSSFSheet sheet = receiptsXLSX.getSheetAt(0);
+
+
+            int last = sheet.getLastRowNum();
+            for (int i = 1; i < last; i++) {
+                final XSSFRow row = sheet.getRow(i);
+                sheet.removeRow(row);
+            }
+
+            // header
+            final List<String> headers = new ArrayList<>();
+            headers.add("Nr. Crt.");
+            headers.add("Nume si prenume");
+            headers.add("Serie chitanta");
+            headers.add("Numar chitanta");
+            headers.add("Data");
+            headers.add("Suma");
+
+            final XSSFRow row = sheet.createRow(0);
+
+            for (int i = 0; i < headers.size(); i++) {
+
+                final XSSFCell cell = row.createCell(i);
+                cell.setCellValue(headers.get(i));
+
+            }
+
+
+            // todo: get receipts by date
+            // todo: put in tables
+            // todo: send email with receipts
+
+
+            FileOutputStream fileOutputStream = new FileOutputStream(receipts);
+
+            receiptsXLSX.write(fileOutputStream);
+            fileOutputStream.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 }

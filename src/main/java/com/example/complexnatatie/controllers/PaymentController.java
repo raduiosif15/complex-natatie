@@ -51,58 +51,10 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.sendEmail(), HttpStatus.OK);
     }
 
-// todo: delete these lines
-//
-
-//
-//
-//
-//
-//    // create file
-//
-//    serverPath = servletRequest.getSession().getServletContext().getRealPath("/");
-//    File reject = new File(serverPath+"/reject.xlsx");
-//
-//		System.out.println(reject.getAbsolutePath());
-//
-//    XSSFWorkbook rejectXLSX = new XSSFWorkbook(new FileInputStream(reject));
-//
-//    final XSSFSheet sheet = rejectXLSX.getSheetAt(0);
-//
-////    int last = sheet.getLastRowNum();
-////
-////		for(int i=1; i<last; i++) {
-////
-////        try {
-////            XSSFRow row = sheet.getRow(i);
-////            sheet.removeRow(row);
-////        }
-////        catch (Exception e) {
-////
-////        }
-////    }
-//
-//    Iterator<Customer> iter = rejectList.iterator();
-//
-//    // row 0 cap tabel
-//
-//
-//    int rowNr = 1;
-//		while(iter.hasNext())
-//
-//    {
-//        customer = iter.next();
-//        row = sheet.createRow(rowNr);
-//
-//        cell = row.createCell(0);
-//        cell.setCellValue(customer.getUniqueCode());
-//
-//        rowNr++;
-//    }
-//
-//    FileOutputStream fos = new FileOutputStream(reject);
-//
-//		rejectXLSX.write(fos);
-//		fos.close();
+    @PostMapping("/xlsx")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Object> xlsxCreate() {
+        return new ResponseEntity<>(paymentService.xlsxCreate(), HttpStatus.OK);
+    }
 
 }
