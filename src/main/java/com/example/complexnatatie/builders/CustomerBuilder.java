@@ -18,6 +18,7 @@ public class CustomerBuilder {
                 .phone(customer.getPhone())
                 .cnp(customer.getCnp())
                 .utcnID(customer.getUtcnID())
+                .codeID(customer.getCodeID())
                 .type(new CustomerType(customer.getType()))
                 .build();
     }
@@ -33,6 +34,7 @@ public class CustomerBuilder {
                 .phone(customerDTO.getPhone())
                 .cnp(customerDTO.getCnp())
                 .utcnID(customerDTO.getUtcnID())
+                .codeID(customerDTO.getCodeID())
                 .type(customerDTO.getType().getName())
                 .build();
     }

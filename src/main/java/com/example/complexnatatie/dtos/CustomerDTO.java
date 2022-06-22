@@ -23,6 +23,8 @@ public class CustomerDTO {
 
     private String utcnID;
 
+    private long codeID;
+
     private CustomerType type;
 
 }

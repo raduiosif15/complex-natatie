@@ -26,10 +26,16 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getAll(), HttpStatus.OK);
     }
 
-    @PostMapping()
+    @GetMapping("/preview/{customerId}/{months}")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Double> preview(@PathVariable int customerId, @PathVariable int months) {
+        return new ResponseEntity<>(paymentService.preview(customerId, months), HttpStatus.OK);
+    }
+
+    @PostMapping
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<PaymentResponse> pay(@RequestBody PaymentRequest paymentRequest) {
-        return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.OK);
+        return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
     }
 
 }

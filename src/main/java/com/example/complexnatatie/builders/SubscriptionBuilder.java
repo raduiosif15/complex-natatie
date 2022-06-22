@@ -15,7 +15,7 @@ public class SubscriptionBuilder {
                 .id(subscription.getId())
                 .startDate(subscription.getStartDate())
                 .endDate(subscription.getEndDate())
-                .contractId(subscription.getContractId())
+                .customerId(subscription.getCustomerId())
                 .build();
     }
 
@@ -34,7 +34,7 @@ public class SubscriptionBuilder {
                 .id(subscriptionDTO.getId())
                 .startDate(subscriptionDTO.getStartDate())
                 .endDate(subscriptionDTO.getEndDate())
-                .contractId(subscriptionDTO.getContractId())
+                .customerId(subscriptionDTO.getCustomerId())
                 .build();
     }
 }

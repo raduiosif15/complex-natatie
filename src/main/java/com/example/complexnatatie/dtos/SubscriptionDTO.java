@@ -17,6 +17,6 @@ public class SubscriptionDTO {
 
     private Date endDate;
 
-    private int contractId;
+    private int customerId;
 
 }

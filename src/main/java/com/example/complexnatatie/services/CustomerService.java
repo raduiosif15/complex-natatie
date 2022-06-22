@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +21,39 @@ public record CustomerService(CustomerRepository customerRepository) {
         return CustomerBuilder.fromEntities(customerRepository.findAll());
     }
 
-    public List<CustomerDTO> getByName(String name) {
-        final String newName = name.toLowerCase().replace("%20", " ");
+    public List<CustomerDTO> getByNameOrCodeID(String name) {
 
-        return CustomerBuilder.fromEntities(customerRepository.getByName(newName));
+        try {
+
+            final long codeID = Long.parseLong(name);
+            final List<CustomerDTO> list = new ArrayList<>();
+
+            if (codeID == 0) {
+                return list;
+            }
+
+            final Optional<Customer> optionalCustomer = customerRepository.getByCodeID(codeID);
+
+            if (optionalCustomer.isEmpty()) {
+                return list;
+            }
+
+            list.add(CustomerBuilder.fromEntity(optionalCustomer.get()));
+
+            return list;
+
+        } catch (NumberFormatException e) {
+
+            final String newName = name.toLowerCase().replace("%20", " ");
+
+            return CustomerBuilder.fromEntities(customerRepository.getByName(newName));
+
+        }
+
     }
 
     public CustomerDTO save(CustomerDTO customerDTO) {
-        // todo: check if customer already exists (by utcnId)
+        // todo: check if customer already exists (by utcnID or codeID)
         Customer customer = CustomerBuilder.fromDTO(customerDTO);
         customer = customerRepository.save(customer);
         return CustomerBuilder.fromEntity(customer);
