@@ -3,12 +3,12 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
-import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
+import com.example.complexnatatie.controllers.handlers.request.CustomReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.PaymentDTO;
-import com.example.complexnatatie.entities.Payment;
+import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentPos;
 import com.example.complexnatatie.repositories.PaymentCashRepository;
@@ -117,9 +117,7 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     }
 
-    public List<PaymentDTO> getDaily(ReportRequest reportRequest) {
-
-        final List<Payment> allPayments = new ArrayList<>();
+    public List<PaymentForReport> getDaily(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -134,17 +132,20 @@ public record PaymentService(PaymentRepository paymentRepository,
         calendar.add(Calendar.SECOND, -1);
         final Date endDate = calendar.getTime();
 
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
-        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
-        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
-        return PaymentBuilder.fromEntities(allPayments);
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+
+
+        return paymentForReportList;
 
     }
 
-    public List<PaymentDTO> getMonthly(ReportRequest reportRequest) {
-
-        final List<Payment> allPayments = new ArrayList<>();
+    public List<PaymentForReport> getMonthly(ReportRequest reportRequest) {
 
         final Date dateFromRequest = reportRequest.getDate();
 
@@ -162,10 +163,49 @@ public record PaymentService(PaymentRepository paymentRepository,
 
         final Date endDate = calendar.getTime();
 
-        allPayments.addAll(paymentCashRepository.findByDate(startDate, endDate));
-        allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
-        return PaymentBuilder.fromEntities(allPayments);
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
 
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+
+
+        return paymentForReportList;
+
+    }
+
+    public List<PaymentForReport> getCustom(CustomReportRequest reportRequest) {
+        Date startDate = reportRequest.getStartDate();
+        Date endDate = reportRequest.getEndDate();
+
+        final Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(startDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        startDate = calendar.getTime();
+
+
+        calendar.setTime(endDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DATE, 1);
+        calendar.add(Calendar.SECOND, -1);
+        endDate = calendar.getTime();
+
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
+
+        final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+
+
+        return paymentForReportList;
     }
 }
