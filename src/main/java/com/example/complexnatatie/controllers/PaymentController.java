@@ -45,57 +45,15 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
     }
 
+    @PostMapping("/email")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Object> sendEmail() {
+        return new ResponseEntity<>(paymentService.sendEmail(), HttpStatus.OK);
+    }
 
-//    public static void emailSender(String toEmail, String subject, String messageText) throws Exception {
+// todo: delete these lines
 //
-//
-//        Properties props = new Properties();
-//        props.put("mail.smtp.auth", "true");
-//        props.put("mail.smtp.starttls.enable", "true");
-//        props.put("mail.smtp.host", "mail.utcluj.ro");
-//        props.put("mail.smtp.port", "587");
-//        props.put("mail.debug", "true");
-//
-//        Authenticator auth = new Authenticator() {
-//            protected PasswordAuthentication getPasswordAuthentication() {
-//                return new PasswordAuthentication("user", "pass");
-//            }
-//        };
-//
-//        Session session = Session.getInstance(props, auth);
-//
-//        try {
-//
-//            Message message = new MimeMessage(session);
-//            message.setFrom(new InternetAddress("rectorat :))"));
-//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-//            message.setSubject(subject);
-//
-//
-//            MimeBodyPart mimeBodyPart = new MimeBodyPart();
-//            mimeBodyPart.setContent(messageText, "text/html; charset=utf-8");
-//
-//
-//            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-//            attachmentBodyPart.attachFile(new File("path/to/file"));
-//
-//
-//            Multipart multipart = new MimeMultipart();
-//            multipart.addBodyPart(mimeBodyPart);
-//
-//            multipart.addBodyPart(attachmentBodyPart);
-//
-//            message.setContent(multipart);
-//
-//            Transport.send(message);
-//
-//            System.out.println("Message Sent.");
-//        } catch (MessagingException ex) {
-//            throw new RuntimeException(ex);
-//        }
-//
-//
-//    }
+
 //
 //
 //

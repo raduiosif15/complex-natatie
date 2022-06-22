@@ -3,8 +3,8 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.PaymentBuilder;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
-import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.PaymentDTO;
@@ -14,15 +14,14 @@ import com.example.complexnatatie.entities.PaymentPos;
 import com.example.complexnatatie.repositories.PaymentCashRepository;
 import com.example.complexnatatie.repositories.PaymentPosRepository;
 import com.example.complexnatatie.repositories.PaymentRepository;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public record PaymentService(PaymentRepository paymentRepository,
@@ -166,6 +165,74 @@ public record PaymentService(PaymentRepository paymentRepository,
         allPayments.addAll(paymentPosRepository.findByDate(startDate, endDate));
 
         return PaymentBuilder.fromEntities(allPayments);
+
+    }
+
+
+    public Object sendEmail() {
+
+        emailSender("raduiosif15@yahoo.com", "Test", "This is a test email");
+
+        return null;
+
+    }
+
+    public static void emailSender(String toEmail, String subject, String messageText) {
+
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.mailtrap.io");
+        props.put("mail.smtp.port", "2525");
+        props.put("mail.debug", "true");
+
+
+        Authenticator auth;
+
+        auth = new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(
+                        "7329242b12f026",
+                        "d1330f881cc9b8"
+                );
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("no-reply@complexnatatie.utcluj.ro"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            message.setSubject(subject);
+
+            // multipart for all email content
+            Multipart multipart = new MimeMultipart();
+
+            // bodyPart for message
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(messageText, "text/html; charset=utf-8");
+
+//            MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+//            attachmentBodyPart.attachFile(new File("path/to/file"));
+//            multipart.addBodyPart(attachmentBodyPart);
+
+            // add bodyPart to multipart
+            multipart.addBodyPart(mimeBodyPart);
+
+            // add multipart to message
+            message.setContent(multipart);
+
+            // send message
+            Transport.send(message);
+
+            System.out.println("Message Sent.");
+        } catch (MessagingException ex) {
+            throw new RuntimeException(ex);
+        }
+
 
     }
 }
