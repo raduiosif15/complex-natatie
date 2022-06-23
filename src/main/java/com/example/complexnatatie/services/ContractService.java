@@ -104,8 +104,8 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return ContractBuilder.fromEntities(contractList);
     }
 
-    public List<ContractMonthlyStatistic> getActiveMonthStatisticForYear(int year) {
-        final List<Object[]> statistics = contractRepository.getActiveMonthStatisticForYear(year);
+    public List<ContractMonthlyStatistic> getMonthStatisticForYear(int year) {
+        final List<Object[]> statistics = contractRepository.getMonthStatisticForYear(year);
 
         final List<ContractMonthlyStatistic> contractMonthlyStatistics = new ArrayList<>();
 

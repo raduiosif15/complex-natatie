@@ -46,7 +46,7 @@ public class ContractController {
 
     @GetMapping(value = "/statistic/{year}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ContractMonthlyStatistic>> getActiveMonthStatisticForYear(@PathVariable int year) {
-        return new ResponseEntity<>(contractService.getActiveMonthStatisticForYear(year), HttpStatus.OK);
+    public ResponseEntity<List<ContractMonthlyStatistic>> getMonthStatisticForYear(@PathVariable int year) {
+        return new ResponseEntity<>(contractService.getMonthStatisticForYear(year), HttpStatus.OK);
     }
 }
