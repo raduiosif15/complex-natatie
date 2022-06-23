@@ -19,12 +19,6 @@ public class ContractController {
 
     private final ContractService contractService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<ContractDTO>> getAll() {
-        return new ResponseEntity<>(contractService.getAll(), HttpStatus.OK);
-    }
-
     @GetMapping(value = "/{customerId}/valid")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<ContractValidityResponse> checkValidContractExists(@PathVariable int customerId) {
@@ -41,5 +35,11 @@ public class ContractController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<ContractDTO> create(@PathVariable int customerId) {
         return new ResponseEntity<>(contractService.create(customerId, false), HttpStatus.CREATED);
+    }
+
+    @GetMapping(value = "/{customerId}/all")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<ContractDTO>> getAllByCustomerId(@PathVariable int customerId) {
+        return new ResponseEntity<>(contractService.getAllByCustomerId(customerId), HttpStatus.OK);
     }
 }

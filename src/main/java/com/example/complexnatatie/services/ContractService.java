@@ -4,7 +4,6 @@ import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.TaxBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
-import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.CustomerDTO;
@@ -21,29 +20,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository,
                               TaxRepository taxRepository) {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractService.class);
-
-    public List<ContractDTO> getAll() {
-        return ContractBuilder.fromEntities(contractRepository.findAll());
-    }
-
-    public ContractDTO getById(int contractId) {
-        final Optional<Contract> optionalContract = contractRepository.getById(contractId);
-
-        if (optionalContract.isEmpty()) {
-
-            LOGGER.error("Contract with id: {} doesn't exist.", contractId);
-            throw new ResourceNotFoundException("Contract with id: " + contractId + " doesn't exist.");
-
-        }
-
-        return ContractBuilder.fromEntity(optionalContract.get());
-    }
 
     public ContractValidityResponse checkValidContractExists(int customerId) {
         final Optional<Contract> optionalContract = contractRepository.getActiveContractByCustomerId(customerId);
@@ -113,4 +98,9 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         return contractDTO;
     }
 
+    public List<ContractDTO> getAllByCustomerId(int customerId) {
+        final List<Contract> contractList = contractRepository.getAllByCustomerId(customerId);
+
+        return ContractBuilder.fromEntities(contractList);
+    }
 }

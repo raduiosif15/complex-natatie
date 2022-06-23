@@ -1,8 +1,9 @@
 package com.example.complexnatatie.controllers;
 
+import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
-import com.example.complexnatatie.dtos.PaymentDTO;
+import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,6 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentDTO>> getAll() {
-        return new ResponseEntity<>(paymentService.getAll(), HttpStatus.OK);
-    }
-
     @GetMapping("/preview/{customerId}/{months}")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Double> preview(@PathVariable int customerId, @PathVariable int months) {
@@ -36,6 +31,28 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<PaymentResponse> pay(@RequestBody PaymentRequest paymentRequest) {
         return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/report")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentForReport>> getReport(
+            @RequestParam String date,
+            @RequestParam String type,
+            @RequestParam String endDate
+    ) {
+        return new ResponseEntity<>(paymentService.getReport(date, endDate, type), HttpStatus.OK);
+    }
+
+    @PostMapping("/email")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Object> sendEmail() {
+        return new ResponseEntity<>(paymentService.sendEmail(), HttpStatus.OK);
+    }
+
+    @PostMapping("/email-with-xlsx")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<Object> sendEmailWithXlsx(@RequestBody SendEmailRequest reportRequest) {
+        return new ResponseEntity<>(paymentService.sendEmailWithXlsx(reportRequest), HttpStatus.OK);
     }
 
 }

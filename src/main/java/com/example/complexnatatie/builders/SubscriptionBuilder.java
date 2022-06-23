@@ -20,21 +20,12 @@ public class SubscriptionBuilder {
     }
 
     public static List<SubscriptionDTO> fromEntities(List<Subscription> subscriptions) {
-        // dates cannot be equals
         //noinspection ComparatorMethodParameterNotUsed
         return subscriptions
                 .stream()
                 .map(SubscriptionBuilder::fromEntity)
-                .sorted((s1, s2) -> s1.getStartDate().after(s2.getStartDate()) ? -1 : 1)
+                .sorted((s1, s2) -> s1.getStartDate().after(s2.getEndDate()) ? -1 : 1)
                 .collect(Collectors.toList());
     }
 
-    public static Subscription fromDTO(SubscriptionDTO subscriptionDTO) {
-        return Subscription.builder()
-                .id(subscriptionDTO.getId())
-                .startDate(subscriptionDTO.getStartDate())
-                .endDate(subscriptionDTO.getEndDate())
-                .customerId(subscriptionDTO.getCustomerId())
-                .build();
-    }
 }

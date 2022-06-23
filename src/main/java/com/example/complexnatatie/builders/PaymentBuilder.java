@@ -2,13 +2,14 @@ package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.PaymentDTO;
+import com.example.complexnatatie.dtos.PaymentForReport;
+import com.example.complexnatatie.entities.Contract;
+import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Payment;
-import com.example.complexnatatie.entities.PaymentCash;
-import com.example.complexnatatie.entities.PaymentPos;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class PaymentBuilder {
@@ -24,34 +25,26 @@ public class PaymentBuilder {
                 .build();
     }
 
-    public static List<PaymentDTO> fromEntities(List<Payment> payments) {
-        return payments.stream().map(PaymentBuilder::fromEntity).collect(Collectors.toList());
-    }
+    public static List<PaymentForReport> fromObjects(List<Object[]> objects) {
+        final List<PaymentForReport> paymentForReportList = new ArrayList<>();
 
-    public static Payment fromDTO(PaymentDTO paymentDTO) {
+        for (Object[] objDetails : objects) {
 
-        if (paymentDTO.getType().getName().equals(PaymentType.POS.getName())) {
+            final PaymentForReport paymentForReport = new PaymentForReport();
 
-            return new PaymentPos(
-                    paymentDTO.getId(),
-                    paymentDTO.getDate(),
-                    paymentDTO.getValue(),
-                    paymentDTO.getDescription(),
-                    paymentDTO.getType().getName(),
-                    paymentDTO.getCustomerId()
-            );
+            paymentForReport.setPayment(PaymentBuilder.fromEntity((Payment) (objDetails[0])));
+            paymentForReport.setCustomer(CustomerBuilder.fromEntity((Customer) (objDetails[1])));
+            paymentForReport.setContract(ContractBuilder.fromEntity((Contract) (objDetails[2])));
+
+            paymentForReportList.add(paymentForReport);
 
         }
 
-
-        return new PaymentCash(
-                paymentDTO.getId(),
-                paymentDTO.getDate(),
-                paymentDTO.getValue(),
-                paymentDTO.getDescription(),
-                paymentDTO.getType().getName(),
-                paymentDTO.getCustomerId()
-        );
+        //noinspection ComparatorMethodParameterNotUsed
+        return paymentForReportList
+                .stream()
+                .sorted((p1, p2) -> p1.getPayment().getDate().after(p2.getPayment().getDate()) ? 1 : -1)
+                .toList();
     }
 
 }
