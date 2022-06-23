@@ -274,6 +274,8 @@ public record PaymentService(PaymentRepository paymentRepository,
         String serverPath = servletContext.getRealPath("/");
         File receipts = new File(serverPath + "/receipts.xlsx");
 
+        System.out.println("absolute path: " + receipts.getAbsolutePath());
+
         try {
 
             FileInputStream fileInputStream = new FileInputStream(receipts);
@@ -282,9 +284,8 @@ public record PaymentService(PaymentRepository paymentRepository,
             // get sheet 0
             final XSSFSheet sheet = receiptsXLSX.getSheetAt(0);
 
-
             int last = sheet.getLastRowNum();
-            for (int i = 1; i < last; i++) {
+            for (int i = 0; i <= last; i++) {
                 final XSSFRow row = sheet.getRow(i);
                 sheet.removeRow(row);
             }
