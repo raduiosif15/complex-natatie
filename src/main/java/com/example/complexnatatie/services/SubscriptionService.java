@@ -4,6 +4,7 @@ import com.example.complexnatatie.builders.SubscriptionBuilder;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.controllers.handlers.responses.SubscriptionResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
+import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Subscription;
 import com.example.complexnatatie.repositories.SubscriptionRepository;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -98,4 +100,8 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
 
     }
 
+    public List<SubscriptionDTO> getAllByCustomerId(int customerId) {
+        final List<Subscription> subscriptionList = subscriptionRepository.getAllByCustomerId(customerId);
+        return SubscriptionBuilder.fromEntities(subscriptionList);
+    }
 }
