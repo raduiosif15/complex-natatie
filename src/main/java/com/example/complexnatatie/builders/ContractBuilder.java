@@ -24,7 +24,12 @@ public class ContractBuilder {
     }
 
     public static List<ContractDTO> fromEntities(List<Contract> contracts) {
-        return contracts.stream().map(ContractBuilder::fromEntity).collect(Collectors.toList());
+        //noinspection ComparatorMethodParameterNotUsed
+        return contracts
+                .stream()
+                .map(ContractBuilder::fromEntity)
+                .sorted((c1, c2) -> c1.getStartDate().after(c2.getEndDate()) ? -1 : 1)
+                .collect(Collectors.toList());
     }
 
     public static Contract fromDTO(ContractDTO contractDTO) {

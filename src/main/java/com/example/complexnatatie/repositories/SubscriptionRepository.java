@@ -1,6 +1,5 @@
 package com.example.complexnatatie.repositories;
 
-import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +15,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
             "AND subscription.endDate >= CURRENT_DATE ")
     Optional<Subscription> findActiveByCustomerId(int customerId);
 
+    @Query(value = "SELECT subscription " +
+            "FROM Subscription subscription " +
+            "WHERE subscription.customerId = :customerId ")
+    List<Subscription> getAllByCustomerId(int customerId);
 }

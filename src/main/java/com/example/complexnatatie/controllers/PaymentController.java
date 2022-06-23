@@ -1,7 +1,6 @@
 package com.example.complexnatatie.controllers;
 
-import com.example.complexnatatie.controllers.handlers.request.CustomReportRequest;
-import com.example.complexnatatie.controllers.handlers.request.ReportRequest;
+import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.PaymentForReport;
@@ -34,22 +33,26 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
     }
 
-    @PostMapping("/daily")
+    @GetMapping("/report")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentForReport>> getDaily(@RequestBody ReportRequest reportRequest) {
-        return new ResponseEntity<>(paymentService.getDaily(reportRequest), HttpStatus.OK);
+    public ResponseEntity<List<PaymentForReport>> getReport(
+            @RequestParam String date,
+            @RequestParam String type,
+            @RequestParam String endDate
+    ) {
+        return new ResponseEntity<>(paymentService.getReport(date, endDate, type), HttpStatus.OK);
     }
 
-    @PostMapping("/monthly")
+    @PostMapping("/email")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentForReport>> getMonthly(@RequestBody ReportRequest reportRequest) {
-        return new ResponseEntity<>(paymentService.getMonthly(reportRequest), HttpStatus.OK);
+    public ResponseEntity<Object> sendEmail() {
+        return new ResponseEntity<>(paymentService.sendEmail(), HttpStatus.OK);
     }
 
-    @PostMapping("/custom")
+    @PostMapping("/email-with-xlsx")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<List<PaymentForReport>> getCustom(@RequestBody CustomReportRequest reportRequest) {
-        return new ResponseEntity<>(paymentService.getCustom(reportRequest), HttpStatus.OK);
+    public ResponseEntity<Object> sendEmailWithXlsx(@RequestBody SendEmailRequest reportRequest) {
+        return new ResponseEntity<>(paymentService.sendEmailWithXlsx(reportRequest), HttpStatus.OK);
     }
 
 }

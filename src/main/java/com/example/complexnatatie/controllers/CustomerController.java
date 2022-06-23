@@ -25,7 +25,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{nameOrCodeID}")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
     public ResponseEntity<List<CustomerDTO>> getByNameOrCodeID(@PathVariable String nameOrCodeID) {
         return new ResponseEntity<>(customerService.getByNameOrCodeID(nameOrCodeID), HttpStatus.OK);
     }

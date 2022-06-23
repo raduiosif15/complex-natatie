@@ -1,12 +1,15 @@
 package com.example.complexnatatie.controllers;
 
 import com.example.complexnatatie.controllers.handlers.responses.SubscriptionResponse;
+import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -27,6 +30,12 @@ public class SubscriptionController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Integer> getMonthsLeftUnpaid(@PathVariable int customerId) {
         return new ResponseEntity<>(subscriptionService.getMonthsLeftUnpaid(customerId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{customerId}/all")
+    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    public ResponseEntity<List<SubscriptionDTO>> getAllByCustomerId(@PathVariable int customerId) {
+        return new ResponseEntity<>(subscriptionService.getAllByCustomerId(customerId), HttpStatus.OK);
     }
 
 }
