@@ -1,6 +1,7 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.PaymentBuilder;
+import com.example.complexnatatie.builders.helpers.Constants;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.builders.helpers.ReportType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
@@ -350,22 +351,20 @@ public record PaymentService(PaymentRepository paymentRepository,
 
     public static void emailSender(String toEmail, String subject, String messageText, String pathToFile) {
 
-
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.mailtrap.io");
-        props.put("mail.smtp.port", "2525");
+        props.put("mail.smtp.host", Constants.EMAIL_HOST);
+        props.put("mail.smtp.port", Constants.EMAIL_SMTP_PORT);
         props.put("mail.debug", "true");
-
 
         Authenticator auth;
 
         auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(
-                        "7329242b12f026",
-                        "d1330f881cc9b8"
+                        Constants.EMAIL_USER,
+                        Constants.EMAIL_PASS
                 );
             }
         };
@@ -375,7 +374,7 @@ public record PaymentService(PaymentRepository paymentRepository,
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("no-reply@complexnatatie.utcluj.ro"));
+            message.setFrom(new InternetAddress(Constants.EMAIL_USER));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject(subject);
 
