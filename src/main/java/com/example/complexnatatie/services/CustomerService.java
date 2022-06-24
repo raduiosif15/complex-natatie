@@ -62,19 +62,19 @@ public record CustomerService(CustomerRepository customerRepository) {
             if (!list.isEmpty()) {
                 LOGGER.error("Customer with code id: {} already exist in database", customerDTO.getCodeID());
                 throw new CustomException(
-                        "Customer with code id: " + customerDTO.getCodeID() + " already exist in database",
+                        "Clientul cu id-ul legitimatiei " + customerDTO.getCodeID() + " exista deja salvat in sistem",
                         HttpStatus.CONFLICT
                 );
             }
         }
 
-        if (!customerDTO.getUtcnID().isEmpty()) {
+        if (customerDTO.getUtcnID() != null && !customerDTO.getUtcnID().isEmpty()) {
             final Optional<Customer> optionalCustomer = customerRepository.getByUtcnId(customerDTO.getUtcnID());
 
             if (optionalCustomer.isPresent()) {
                 LOGGER.error("Customer with utcn id: {} already exist in database", customerDTO.getUtcnID());
                 throw new CustomException(
-                        "Customer with utcn id: " + customerDTO.getUtcnID() + " already exist in database",
+                        "Clientul cu adresa de email " + customerDTO.getUtcnID() + " exista deja salvat in sistem",
                         HttpStatus.CONFLICT
                 );
             }
