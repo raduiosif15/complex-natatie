@@ -42,7 +42,7 @@ public class AuthController {
     // todo: uncomment this
     // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerCreateDTO customerDTO) {
-        return new ResponseEntity<>(authService.createCustomer(customerDTO), HttpStatus.OK);
+        return new ResponseEntity<>(authService.createCustomer(customerDTO), HttpStatus.CREATED);
     }
 
 }
