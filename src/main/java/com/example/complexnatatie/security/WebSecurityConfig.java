@@ -2,6 +2,7 @@ package com.example.complexnatatie.security;
 
 import com.example.complexnatatie.security.jwt.AuthEntryPointJwt;
 import com.example.complexnatatie.security.jwt.AuthTokenFilter;
+import com.example.complexnatatie.services.CustomerService;
 import com.example.complexnatatie.services.OperatorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,10 +24,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     final OperatorService operatorService;
 
+    final CustomerService customerService;
+
     private final AuthEntryPointJwt unauthorizedHandler;
 
-    public WebSecurityConfig(OperatorService operatorService, AuthEntryPointJwt unauthorizedHandler) {
+    public WebSecurityConfig(OperatorService operatorService,
+                             CustomerService customerService,
+                             AuthEntryPointJwt unauthorizedHandler) {
         this.operatorService = operatorService;
+        this.customerService = customerService;
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
@@ -37,7 +43,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+
         authenticationManagerBuilder.userDetailsService(operatorService).passwordEncoder(passwordEncoder());
+        authenticationManagerBuilder.userDetailsService(customerService).passwordEncoder(passwordEncoder());
+
     }
 
     @Bean

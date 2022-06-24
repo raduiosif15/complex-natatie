@@ -1,14 +1,19 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.CustomerBuilder;
+import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
+import com.example.complexnatatie.entities.Operator;
 import com.example.complexnatatie.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,8 +21,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public record CustomerService(CustomerRepository customerRepository) {
+public class CustomerService implements UserDetailsService {
+
+    final CustomerRepository customerRepository;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
+
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Customer customer = customerRepository.getByUtcnId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+
+        return CustomerBuilder.userDetailsBuilder(customer);
+
+    }
 
     public List<CustomerDTO> getAll() {
         return CustomerBuilder.fromEntities(customerRepository.findAll());

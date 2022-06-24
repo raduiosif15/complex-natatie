@@ -1,10 +1,13 @@
 package com.example.complexnatatie.services;
 
-import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CreateAccountException;
+import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
+import com.example.complexnatatie.dtos.CustomerCreateDTO;
 import com.example.complexnatatie.dtos.OperatorDTO;
+import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Operator;
+import com.example.complexnatatie.repositories.CustomerRepository;
 import com.example.complexnatatie.repositories.OperatorRepository;
 import com.example.complexnatatie.security.jwt.JwtUtils;
 import com.example.complexnatatie.security.payload.requests.LoginRequest;
@@ -12,6 +15,7 @@ import com.example.complexnatatie.security.payload.responses.JwtResponse;
 import com.example.complexnatatie.security.service.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,12 +26,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public record AuthService(AuthenticationManager authenticationManager, JwtUtils jwtUtils,
-                          OperatorRepository operatorRepository, PasswordEncoder encoder) {
+public record AuthService(AuthenticationManager authenticationManager,
+                          JwtUtils jwtUtils,
+                          OperatorRepository operatorRepository,
+                          PasswordEncoder encoder,
+                          CustomerRepository customerRepository) {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
-    public JwtResponse auth(LoginRequest loginRequest) {
+    public JwtResponse authOperator(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
@@ -35,7 +42,13 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        Operator operator = operatorRepository.findByUtcnId(loginRequest.getUtcnId()).get();
+        Optional<Operator> optionalOperator = operatorRepository.findByUtcnId(loginRequest.getUtcnId());
+
+        if (optionalOperator.isEmpty()) {
+            throw new ResourceNotFoundException("Operator with utcnId: " + loginRequest.getUtcnId() + " doesn't exist.");
+        }
+
+        Operator operator = optionalOperator.get();
 
         String jwt = jwtUtils.generateJwtToken(userDetails);
 
@@ -44,6 +57,36 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
                 .id(operator.getId())
                 .utcnId(operator.getUtcnId())
                 .type(operator.getType())
+                .build();
+
+    }
+
+    public JwtResponse authCustomer(LoginRequest loginRequest) {
+
+        System.out.println("authentication: " + loginRequest.toString());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
+
+        System.out.println("authentication: " + authentication.toString());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+
+        Optional<Customer> optionalCustomer = customerRepository.getByUtcnId(loginRequest.getUtcnId());
+
+        if (optionalCustomer.isEmpty()) {
+            throw new ResourceNotFoundException("Customer with utcnId: " + loginRequest.getUtcnId() + " doesn't exist.");
+        }
+
+        Customer customer = optionalCustomer.get();
+
+        return JwtResponse.builder()
+                .token(jwt)
+                .id(customer.getId())
+                .utcnId(customer.getUtcnID())
+                .type(customer.getType())
                 .build();
 
     }
@@ -68,22 +111,44 @@ public record AuthService(AuthenticationManager authenticationManager, JwtUtils 
         return newOperator.getId();
     }
 
+    public int createCustomer(CustomerCreateDTO customerDTO) {
 
-    public OperatorDTO changePassword(int id, String password) {
-        Optional<Operator> optionalOperator = operatorRepository.findById(id);
+        if (customerDTO.getCodeID() > 0) {
+            final Optional<Customer> optionalCustomer = customerRepository.getByCodeID(customerDTO.getCodeID());
 
-        if (optionalOperator.isEmpty()) {
-            LOGGER.error("Operator with id: {} was not found in database", id);
-            throw new ResourceNotFoundException("Operator with id: " + id + " was not found in database");
+            if (optionalCustomer.isPresent()) {
+                LOGGER.error("Customer with code id: {} already exist in database", customerDTO.getCodeID());
+                throw new CustomException(
+                        "Clientul cu id-ul legitimatiei " + customerDTO.getCodeID() + " exista deja salvat in sistem",
+                        HttpStatus.CONFLICT
+                );
+            }
         }
 
-        Operator operator = optionalOperator.get();
+        if (customerDTO.getUtcnID() != null && !customerDTO.getUtcnID().isEmpty()) {
+            final Optional<Customer> optionalCustomer = customerRepository.getByUtcnId(customerDTO.getUtcnID());
 
-        operator.setPassword(encoder.encode(password));
+            if (optionalCustomer.isPresent()) {
+                LOGGER.error("Customer with utcn id: {} already exist in database", customerDTO.getUtcnID());
+                throw new CustomException(
+                        "Clientul cu adresa de email " + customerDTO.getUtcnID() + " exista deja salvat in sistem",
+                        HttpStatus.CONFLICT
+                );
+            }
+        }
 
-        operatorRepository.save(operator);
+        Customer customer = Customer.builder()
+                .firstName(customerDTO.getFirstName())
+                .lastName(customerDTO.getLastName())
+                .phone(customerDTO.getPhone())
+                .cnp(customerDTO.getCnp())
+                .utcnID(customerDTO.getUtcnID())
+                .codeID(customerDTO.getCodeID())
+                .type(customerDTO.getType().getName())
+                .password(encoder.encode(customerDTO.getPassword()))
+                .build();
+        Customer newCustomer = customerRepository.save(customer);
 
-        return OperatorBuilder.fromEntity(operator);
+        return newCustomer.getId();
     }
-
 }
