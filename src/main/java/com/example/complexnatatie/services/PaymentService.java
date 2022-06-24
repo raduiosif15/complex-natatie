@@ -280,15 +280,22 @@ public class PaymentService {
         String serverPath = servletContext.getRealPath("/");
         File receipts = new File(serverPath + "/receipts.xlsx");
 
-        System.out.println("absolute path: " + receipts.getAbsolutePath());
 
         try {
+            boolean alreadyExists = !receipts.createNewFile();
+
+            System.out.println("absolute path: " + receipts.getAbsolutePath());
 
             FileInputStream fileInputStream = new FileInputStream(receipts);
             XSSFWorkbook receiptsXLSX = new XSSFWorkbook(fileInputStream);
 
             // get sheet 0
-            final XSSFSheet sheet = receiptsXLSX.getSheetAt(0);
+            XSSFSheet sheet;
+            if (alreadyExists) {
+                sheet = receiptsXLSX.getSheetAt(0);
+            } else {
+                sheet = receiptsXLSX.createSheet();
+            }
 
             int last = sheet.getLastRowNum();
             for (int i = 0; i <= last; i++) {
