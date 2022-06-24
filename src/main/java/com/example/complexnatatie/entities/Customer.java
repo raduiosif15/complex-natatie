@@ -40,6 +40,9 @@ public class Customer {
     @Column(name = "code_id")
     private long codeID;
 
+    @Column(name = "password")
+    private String password;
+
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

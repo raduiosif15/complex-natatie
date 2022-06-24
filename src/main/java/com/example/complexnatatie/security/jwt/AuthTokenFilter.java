@@ -1,13 +1,14 @@
 package com.example.complexnatatie.security.jwt;
 
 import com.example.complexnatatie.security.service.UserDetailsImpl;
+import com.example.complexnatatie.services.CustomerService;
 import com.example.complexnatatie.services.OperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,20 +26,35 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private OperatorService operatorService;
 
+    @Autowired
+    private CustomerService customerService;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUtcnIdFromJwtToken(jwt);
 
-                UserDetailsImpl userDetails = (UserDetailsImpl) operatorService.loadUserByUsername(username);
+                UserDetailsImpl userDetails;
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+                try {
+                    userDetails = (UserDetailsImpl) operatorService.loadUserByUsername(username);
+                } catch (UsernameNotFoundException e) {
+                    userDetails = (UserDetailsImpl) customerService.loadUserByUsername(username);
+
+                }
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

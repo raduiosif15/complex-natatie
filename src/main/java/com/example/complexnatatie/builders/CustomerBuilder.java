@@ -3,8 +3,13 @@ package com.example.complexnatatie.builders;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.builders.helpers.CustomerType;
+import com.example.complexnatatie.entities.Operator;
+import com.example.complexnatatie.security.service.UserDetailsImpl;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +41,17 @@ public class CustomerBuilder {
                 .utcnID(customerDTO.getUtcnID())
                 .codeID(customerDTO.getCodeID())
                 .type(customerDTO.getType().getName())
+                .build();
+    }
+
+    public static UserDetailsImpl userDetailsBuilder(Customer  customer) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(customer.getType()));
+
+        return UserDetailsImpl.builder()
+                .username(customer.getUtcnID())
+                .password(customer.getPassword())
+                .authorities(authorities)
                 .build();
     }
 }
