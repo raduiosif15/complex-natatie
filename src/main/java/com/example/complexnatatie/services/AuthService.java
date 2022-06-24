@@ -1,9 +1,11 @@
 package com.example.complexnatatie.services;
 
+import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CreateAccountException;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.CustomerCreateDTO;
+import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.dtos.OperatorDTO;
 import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.entities.Operator;
@@ -111,7 +113,7 @@ public record AuthService(AuthenticationManager authenticationManager,
         return newOperator.getId();
     }
 
-    public int createCustomer(CustomerCreateDTO customerDTO) {
+    public CustomerDTO createCustomer(CustomerCreateDTO customerDTO) {
 
         if (customerDTO.getCodeID() > 0) {
             final Optional<Customer> optionalCustomer = customerRepository.getByCodeID(customerDTO.getCodeID());
@@ -147,8 +149,8 @@ public record AuthService(AuthenticationManager authenticationManager,
                 .type(customerDTO.getType().getName())
                 .password(encoder.encode(customerDTO.getPassword()))
                 .build();
-        Customer newCustomer = customerRepository.save(customer);
+        customer = customerRepository.save(customer);
 
-        return newCustomer.getId();
+        return CustomerBuilder.fromEntity(customer);
     }
 }

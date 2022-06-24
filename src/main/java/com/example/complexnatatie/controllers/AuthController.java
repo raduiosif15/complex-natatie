@@ -41,7 +41,7 @@ public class AuthController {
     @PostMapping("/registerCustomer")
     // todo: uncomment this
     // @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Integer> createCustomer(@RequestBody CustomerCreateDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerCreateDTO customerDTO) {
         return new ResponseEntity<>(authService.createCustomer(customerDTO), HttpStatus.OK);
     }
 
