@@ -139,6 +139,8 @@ public record AuthService(AuthenticationManager authenticationManager,
             }
         }
 
+        System.out.println("Customer DTO print: " + customerDTO);
+
         Customer customer = Customer.builder()
                 .firstName(customerDTO.getFirstName())
                 .lastName(customerDTO.getLastName())
