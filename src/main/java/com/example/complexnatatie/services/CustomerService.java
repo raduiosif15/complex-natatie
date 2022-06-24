@@ -1,12 +1,14 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.CustomerBuilder;
+import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
 import com.example.complexnatatie.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,7 +55,31 @@ public record CustomerService(CustomerRepository customerRepository) {
     }
 
     public CustomerDTO save(CustomerDTO customerDTO) {
-        // todo: check if customer already exists (by utcnID or codeID)
+        if (customerDTO.getCodeID() > 0) {
+            final List<CustomerDTO> list = getByNameOrCodeID(String.valueOf(customerDTO.getCodeID()));
+
+            // if list is not empty there is just one customer with same codeID
+            if (!list.isEmpty()) {
+                LOGGER.error("Customer with code id: {} already exist in database", customerDTO.getCodeID());
+                throw new CustomException(
+                        "Customer with code id: " + customerDTO.getCodeID() + " already exist in database",
+                        HttpStatus.CONFLICT
+                );
+            }
+        }
+
+        if (!customerDTO.getUtcnID().isEmpty()) {
+            final Optional<Customer> optionalCustomer = customerRepository.getByUtcnId(customerDTO.getUtcnID());
+
+            if (optionalCustomer.isPresent()) {
+                LOGGER.error("Customer with utcn id: {} already exist in database", customerDTO.getUtcnID());
+                throw new CustomException(
+                        "Customer with utcn id: " + customerDTO.getUtcnID() + " already exist in database",
+                        HttpStatus.CONFLICT
+                );
+            }
+        }
+
         Customer customer = CustomerBuilder.fromDTO(customerDTO);
         customer = customerRepository.save(customer);
         return CustomerBuilder.fromEntity(customer);

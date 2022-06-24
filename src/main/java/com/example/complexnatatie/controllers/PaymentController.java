@@ -43,12 +43,6 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getReport(date, endDate, type), HttpStatus.OK);
     }
 
-    @PostMapping("/email")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
-    public ResponseEntity<Object> sendEmail() {
-        return new ResponseEntity<>(paymentService.sendEmail(), HttpStatus.OK);
-    }
-
     @PostMapping("/email-with-xlsx")
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Object> sendEmailWithXlsx(@RequestBody SendEmailRequest reportRequest) {

@@ -347,15 +347,6 @@ public class PaymentService {
 
     }
 
-
-    public Object sendEmail() {
-
-        emailSender("raduiosif15@yahoo.com", "Test", "This is a test email", "");
-
-        return null;
-
-    }
-
     public static void emailSender(String toEmail, String subject, String messageText, String pathToFile) {
 
         Properties props = new Properties();
