@@ -1,6 +1,7 @@
 package com.example.complexnatatie.controllers;
 
 import com.example.complexnatatie.dtos.ContractDTO;
+import com.example.complexnatatie.dtos.ContractMonthlyStatistic;
 import com.example.complexnatatie.services.ContractService;
 import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,11 @@ public class ContractController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<List<ContractDTO>> getAllByCustomerId(@PathVariable int customerId) {
         return new ResponseEntity<>(contractService.getAllByCustomerId(customerId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/statistic/{year}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<ContractMonthlyStatistic>> getMonthStatisticForYear(@PathVariable int year) {
+        return new ResponseEntity<>(contractService.getMonthStatisticForYear(year), HttpStatus.OK);
     }
 }

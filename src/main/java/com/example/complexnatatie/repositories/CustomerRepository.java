@@ -20,4 +20,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             "WHERE customer.codeID = :codeID ")
     Optional<Customer> getByCodeID(long codeID);
 
+    @Query(value = "SELECT customer " +
+            "FROM Customer customer " +
+            "WHERE customer.utcnID = :utcnID ")
+    Optional<Customer> getByUtcnId(String utcnID);
 }

@@ -5,8 +5,8 @@ import com.example.complexnatatie.builders.helpers.Constants;
 import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.builders.helpers.ReportType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
-import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.CustomerDTO;
@@ -22,6 +22,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import lombok.AllArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,12 +43,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public record PaymentService(PaymentRepository paymentRepository,
-                             PaymentPosRepository paymentPosRepository,
-                             PaymentCashRepository paymentCashRepository,
-                             ContractService contractService,
-                             SubscriptionService subscriptionService,
-                             ServletContext servletContext) {
+@Transactional
+@AllArgsConstructor
+public class PaymentService {
+
+    final PaymentRepository paymentRepository;
+    final PaymentPosRepository paymentPosRepository;
+    final PaymentCashRepository paymentCashRepository;
+    final ContractService contractService;
+    final SubscriptionService subscriptionService;
+    final ServletContext servletContext;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
@@ -338,15 +344,6 @@ public record PaymentService(PaymentRepository paymentRepository,
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-
-    public Object sendEmail() {
-
-        emailSender("raduiosif15@yahoo.com", "Test", "This is a test email", "");
-
-        return null;
 
     }
 

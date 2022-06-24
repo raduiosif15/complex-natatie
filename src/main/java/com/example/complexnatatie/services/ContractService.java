@@ -3,9 +3,11 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.TaxBuilder;
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
+import com.example.complexnatatie.dtos.ContractMonthlyStatistic;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.dtos.TaxDTO;
 import com.example.complexnatatie.entities.Contract;
@@ -20,10 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.util.*;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository,
@@ -103,4 +103,25 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
 
         return ContractBuilder.fromEntities(contractList);
     }
+
+    public List<ContractMonthlyStatistic> getMonthStatisticForYear(int year) {
+        final List<Object[]> statistics = contractRepository.getMonthStatisticForYear(year);
+
+        final List<ContractMonthlyStatistic> contractMonthlyStatistics = new ArrayList<>();
+
+        for (Object[] statistic : statistics) {
+
+            final ContractMonthlyStatistic contractMonthlyStatistic = new ContractMonthlyStatistic();
+
+            contractMonthlyStatistic.setCount((BigInteger) statistic[0]);
+            contractMonthlyStatistic.setType(new CustomerType((String) statistic[1]));
+            contractMonthlyStatistic.setMonth((String) statistic[2]);
+
+            contractMonthlyStatistics.add(contractMonthlyStatistic);
+
+        }
+
+        return contractMonthlyStatistics;
+    }
+
 }
