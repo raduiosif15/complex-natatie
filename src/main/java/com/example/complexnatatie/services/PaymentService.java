@@ -277,31 +277,12 @@ public class PaymentService {
 
     public void xlsxCreate(List<PaymentForReport> paymentForReportList) {
 
-        String serverPath = servletContext.getRealPath("/");
-        File receipts = new File(serverPath + "/receipts.xlsx");
-
-
         try {
-            boolean alreadyExists = !receipts.createNewFile();
 
-            System.out.println("absolute path: " + receipts.getAbsolutePath());
-
-            FileInputStream fileInputStream = new FileInputStream(receipts);
-            XSSFWorkbook receiptsXLSX = new XSSFWorkbook(fileInputStream);
+            XSSFWorkbook receiptsXLSX = new XSSFWorkbook();
 
             // get sheet 0
-            XSSFSheet sheet;
-            if (alreadyExists) {
-                sheet = receiptsXLSX.getSheetAt(0);
-            } else {
-                sheet = receiptsXLSX.createSheet();
-            }
-
-            int last = sheet.getLastRowNum();
-            for (int i = 0; i <= last; i++) {
-                final XSSFRow row = sheet.getRow(i);
-                sheet.removeRow(row);
-            }
+            XSSFSheet sheet = receiptsXLSX.createSheet();
 
             // header
             final List<String> headers = new ArrayList<>();
@@ -343,7 +324,8 @@ public class PaymentService {
 
             }
 
-            FileOutputStream fileOutputStream = new FileOutputStream(receipts);
+            String serverPath = servletContext.getRealPath("/");
+            FileOutputStream fileOutputStream = new FileOutputStream(serverPath + "/receipts.xlsx");
 
             receiptsXLSX.write(fileOutputStream);
             fileOutputStream.close();
