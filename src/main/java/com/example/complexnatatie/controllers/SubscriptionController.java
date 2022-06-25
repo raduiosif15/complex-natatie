@@ -28,7 +28,7 @@ public class SubscriptionController {
     }
 
     @GetMapping(value = "/self")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('PORTER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_UTCN_STUDENT') or hasRole('ROLE_UTCN_EMPLOYEE')")
     public ResponseEntity<SubscriptionResponse> findActiveSelf(Authentication authentication) {
         return new ResponseEntity<>(subscriptionService.findActiveSelf(authentication), HttpStatus.OK);
     }
@@ -40,7 +40,7 @@ public class SubscriptionController {
     }
 
     @GetMapping(value = "/unpaid/self")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_UTCN_STUDENT') or hasRole('ROLE_UTCN_EMPLOYEE')")
     public ResponseEntity<Integer> getSelfMonthsLeftUnpaid(Authentication authentication) {
         return new ResponseEntity<>(subscriptionService.getSelfMonthsLeftUnpaid(authentication), HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class SubscriptionController {
     }
 
     @GetMapping(value = "/self/all")
-    @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_UTCN_STUDENT') or hasRole('ROLE_UTCN_EMPLOYEE')")
     public ResponseEntity<List<SubscriptionDTO>> getAllSelf(Authentication authentication) {
         return new ResponseEntity<>(subscriptionService.getAllSelf(authentication), HttpStatus.OK);
     }
