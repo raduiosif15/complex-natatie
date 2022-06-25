@@ -16,9 +16,11 @@ import com.example.complexnatatie.entities.Tax;
 import com.example.complexnatatie.repositories.ContractRepository;
 import com.example.complexnatatie.repositories.CustomerRepository;
 import com.example.complexnatatie.repositories.TaxRepository;
+import com.example.complexnatatie.security.service.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -40,6 +42,14 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         }
 
         return new ContractValidityResponse();
+    }
+
+    public ContractValidityResponse checkSelfValid(Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return checkValidContractExists(userDetails.getId());
+
     }
 
     public ContractDTO create(int customerId, boolean isPreview) {
@@ -102,6 +112,14 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
         final List<Contract> contractList = contractRepository.getAllByCustomerId(customerId);
 
         return ContractBuilder.fromEntities(contractList);
+    }
+
+    public List<ContractDTO> getAllSelf(Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return getAllByCustomerId(userDetails.getId());
+
     }
 
     public List<ContractMonthlyStatistic> getMonthStatisticForYear(int year) {

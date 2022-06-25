@@ -1,9 +1,8 @@
 package com.example.complexnatatie.builders;
 
+import com.example.complexnatatie.builders.helpers.CustomerType;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
-import com.example.complexnatatie.builders.helpers.CustomerType;
-import com.example.complexnatatie.entities.Operator;
 import com.example.complexnatatie.security.service.UserDetailsImpl;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,11 +43,14 @@ public class CustomerBuilder {
                 .build();
     }
 
-    public static UserDetailsImpl userDetailsBuilder(Customer  customer) {
+    public static UserDetailsImpl userDetailsBuilder(Customer customer) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(customer.getType()));
 
         return UserDetailsImpl.builder()
+                .id(customer.getId())
+                .utcnId(customer.getUtcnID())
+                .type(customer.getType())
                 .username(customer.getUtcnID())
                 .password(customer.getPassword())
                 .authorities(authorities)

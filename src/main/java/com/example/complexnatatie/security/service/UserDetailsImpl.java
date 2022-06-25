@@ -17,7 +17,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private String utcnId;
 
-    private String operatorType;
+    private String type;
 
     private String username;
 
