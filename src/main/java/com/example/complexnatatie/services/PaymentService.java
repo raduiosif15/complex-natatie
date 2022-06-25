@@ -363,7 +363,17 @@ public class PaymentService {
                 final XSSFCell name = tableRow.createCell(1);
                 name.setCellValue(customer.getFirstName() + " " + customer.getLastName());
                 final XSSFCell series = tableRow.createCell(2);
-                series.setCellValue(payment.getType().getName().equals(PaymentType.POS.getName()) ? "UTPOS" : "UTC");
+
+
+                final String receiptSeries = payment.getType().getName().equals(PaymentType.POS.getName())
+                        ? "UTPOS"
+                        : payment.getType().getName().equals(PaymentType.ONLINE.getName())
+                        ? "UTONLINE"
+                        : "UTC";
+
+                series.setCellValue(receiptSeries);
+
+
                 final XSSFCell number = tableRow.createCell(3);
                 number.setCellValue(payment.getId());
                 final XSSFCell date = tableRow.createCell(4);
