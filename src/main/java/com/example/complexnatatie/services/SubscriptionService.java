@@ -7,6 +7,8 @@ import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.dtos.SubscriptionDTO;
 import com.example.complexnatatie.entities.Subscription;
 import com.example.complexnatatie.repositories.SubscriptionRepository;
+import com.example.complexnatatie.security.service.UserDetailsImpl;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,6 +32,15 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
         return new SubscriptionResponse(SubscriptionBuilder.fromEntity(optionalSubscription.get()));
     }
 
+    public SubscriptionResponse findActiveSelf(Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return findActiveByCustomerId(userDetails.getId());
+
+    }
+
+
     public int getMonthsLeftUnpaid(int customerId) {
 
         final ContractDTO contractDTO = contractService.checkValidContractExists(customerId).getContract();
@@ -51,6 +62,14 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
         return (int) ChronoUnit.MONTHS.between(
                 subscriptionEndDate.withDayOfMonth(1),
                 contractEndDate.withDayOfMonth(1));
+
+    }
+
+    public int getSelfMonthsLeftUnpaid(Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return getMonthsLeftUnpaid(userDetails.getId());
 
     }
 
@@ -103,5 +122,13 @@ public record SubscriptionService(SubscriptionRepository subscriptionRepository,
     public List<SubscriptionDTO> getAllByCustomerId(int customerId) {
         final List<Subscription> subscriptionList = subscriptionRepository.getAllByCustomerId(customerId);
         return SubscriptionBuilder.fromEntities(subscriptionList);
+    }
+
+    public List<SubscriptionDTO> getAllSelf(Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return getAllByCustomerId(userDetails.getId());
+
     }
 }
