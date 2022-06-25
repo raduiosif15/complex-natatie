@@ -1,7 +1,7 @@
 package com.example.complexnatatie.controllers;
 
-import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
+import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.services.PaymentService;
@@ -38,6 +38,12 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<PaymentResponse> pay(@RequestBody PaymentRequest paymentRequest) {
         return new ResponseEntity<>(paymentService.pay(paymentRequest), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/self/{months}")
+    @PreAuthorize("hasRole('ROLE_UTCN_STUDENT') or hasRole('ROLE_UTCN_EMPLOYEE')")
+    public ResponseEntity<PaymentResponse> selfPay(@PathVariable int months, Authentication authentication) {
+        return new ResponseEntity<>(paymentService.selfPay(months, authentication), HttpStatus.CREATED);
     }
 
     @GetMapping("/report")
