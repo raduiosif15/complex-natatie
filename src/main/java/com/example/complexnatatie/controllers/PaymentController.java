@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,12 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Double> preview(@PathVariable int customerId, @PathVariable int months) {
         return new ResponseEntity<>(paymentService.preview(customerId, months), HttpStatus.OK);
+    }
+
+    @GetMapping("/preview/self/{months}")
+    @PreAuthorize("hasRole('ROLE_UTCN_STUDENT') or hasRole('ROLE_UTCN_EMPLOYEE')")
+    public ResponseEntity<Double> previewSelf(@PathVariable int months, Authentication authentication) {
+        return new ResponseEntity<>(paymentService.previewSelf(months, authentication), HttpStatus.OK);
     }
 
     @PostMapping
