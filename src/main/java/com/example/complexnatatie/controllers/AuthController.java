@@ -4,7 +4,8 @@ import com.example.complexnatatie.dtos.CustomerCreateDTO;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.dtos.OperatorDTO;
 import com.example.complexnatatie.security.payload.requests.LoginRequest;
-import com.example.complexnatatie.security.payload.responses.JwtResponse;
+import com.example.complexnatatie.security.payload.responses.JwtCustomerResponse;
+import com.example.complexnatatie.security.payload.responses.JwtOperatorResponse;
 import com.example.complexnatatie.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/operator")
-    public ResponseEntity<JwtResponse> authenticateOperator(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtOperatorResponse> authenticateOperator(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.authOperator(loginRequest), HttpStatus.OK);
     }
 
@@ -34,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/customer")
-    public ResponseEntity<JwtResponse> authenticateCustomer(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtCustomerResponse> authenticateCustomer(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.authCustomer(loginRequest), HttpStatus.OK);
     }
 

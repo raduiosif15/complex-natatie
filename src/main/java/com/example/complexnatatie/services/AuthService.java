@@ -13,7 +13,8 @@ import com.example.complexnatatie.repositories.CustomerRepository;
 import com.example.complexnatatie.repositories.OperatorRepository;
 import com.example.complexnatatie.security.jwt.JwtUtils;
 import com.example.complexnatatie.security.payload.requests.LoginRequest;
-import com.example.complexnatatie.security.payload.responses.JwtResponse;
+import com.example.complexnatatie.security.payload.responses.JwtCustomerResponse;
+import com.example.complexnatatie.security.payload.responses.JwtOperatorResponse;
 import com.example.complexnatatie.security.service.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public record AuthService(AuthenticationManager authenticationManager,
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
-    public JwtResponse authOperator(LoginRequest loginRequest) {
+    public JwtOperatorResponse authOperator(LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
@@ -54,7 +55,7 @@ public record AuthService(AuthenticationManager authenticationManager,
 
         String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        return JwtResponse.builder()
+        return JwtOperatorResponse.builder()
                 .token(jwt)
                 .id(operator.getId())
                 .utcnId(operator.getUtcnId())
@@ -63,7 +64,7 @@ public record AuthService(AuthenticationManager authenticationManager,
 
     }
 
-    public JwtResponse authCustomer(LoginRequest loginRequest) {
+    public JwtCustomerResponse authCustomer(LoginRequest loginRequest) {
 
         System.out.println("authentication: " + loginRequest.toString());
         Authentication authentication = authenticationManager.authenticate(
@@ -84,11 +85,9 @@ public record AuthService(AuthenticationManager authenticationManager,
 
         Customer customer = optionalCustomer.get();
 
-        return JwtResponse.builder()
+        return JwtCustomerResponse.builder()
                 .token(jwt)
-                .id(customer.getId())
-                .utcnId(customer.getUtcnID())
-                .type(customer.getType())
+                .customer(CustomerBuilder.fromEntity(customer))
                 .build();
 
     }

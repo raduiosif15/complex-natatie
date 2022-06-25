@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class JwtResponse {
+public class JwtOperatorResponse {
 
     private int id;
 
