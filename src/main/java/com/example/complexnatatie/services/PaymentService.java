@@ -13,8 +13,10 @@ import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.dtos.PaymentDTO;
 import com.example.complexnatatie.dtos.PaymentForReport;
 import com.example.complexnatatie.entities.PaymentCash;
+import com.example.complexnatatie.entities.PaymentOnline;
 import com.example.complexnatatie.entities.PaymentPos;
 import com.example.complexnatatie.repositories.PaymentCashRepository;
+import com.example.complexnatatie.repositories.PaymentOnlineRepository;
 import com.example.complexnatatie.repositories.PaymentPosRepository;
 import com.example.complexnatatie.repositories.PaymentRepository;
 import com.example.complexnatatie.security.service.UserDetailsImpl;
@@ -37,7 +39,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletContext;
 import javax.transaction.Transactional;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -52,6 +53,7 @@ public class PaymentService {
     final PaymentRepository paymentRepository;
     final PaymentPosRepository paymentPosRepository;
     final PaymentCashRepository paymentCashRepository;
+    final PaymentOnlineRepository paymentOnlineRepository;
     final ContractService contractService;
     final SubscriptionService subscriptionService;
     final ServletContext servletContext;
@@ -132,6 +134,21 @@ public class PaymentService {
             paymentResponse.setPayment(PaymentBuilder.fromEntity(paymentPos));
             return paymentResponse;
 
+        } else if (paymentRequest.getType().getName().equals(PaymentType.ONLINE.getName())) {
+
+            PaymentOnline paymentOnline = new PaymentOnline(
+                    0,
+                    date,
+                    value,
+                    paymentRequest.getDescription(),
+                    paymentRequest.getType().getName(),
+                    paymentRequest.getCustomerId()
+            );
+
+            paymentOnline = paymentRepository.save(paymentOnline);
+            paymentResponse.setPayment(PaymentBuilder.fromEntity(paymentOnline));
+            return paymentResponse;
+
         }
 
         PaymentCash paymentCash = new PaymentCash(
@@ -148,6 +165,22 @@ public class PaymentService {
         return paymentResponse;
 
     }
+
+    public PaymentResponse selfPay(int months, Authentication authentication) {
+
+        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        final PaymentRequest paymentRequest = new PaymentRequest();
+
+        paymentRequest.setCustomerId(userDetails.getId());
+        paymentRequest.setDescription("Plata online pentru " + months + " luni" + " de la clientul " + userDetails.getUtcnId());
+        paymentRequest.setType(PaymentType.ONLINE);
+        paymentRequest.setMonths(months);
+
+        return pay(paymentRequest);
+
+    }
+
 
     public List<PaymentForReport> getReport(String date,
                                             String endDate,
@@ -186,9 +219,11 @@ public class PaymentService {
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsOnline = paymentOnlineRepository.findByDate(startDate, endDate);
 
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsOnline));
 
 
         return paymentForReportList;
@@ -215,9 +250,11 @@ public class PaymentService {
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsOnline = paymentOnlineRepository.findByDate(startDate, endDate);
 
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsOnline));
 
 
         return paymentForReportList;
@@ -247,9 +284,11 @@ public class PaymentService {
 
         final List<Object[]> objectsCash = paymentCashRepository.findByDate(startDate, endDate);
         final List<Object[]> objectsPos = paymentPosRepository.findByDate(startDate, endDate);
+        final List<Object[]> objectsOnline = paymentOnlineRepository.findByDate(startDate, endDate);
 
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsCash));
         paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsPos));
+        paymentForReportList.addAll(PaymentBuilder.fromObjects(objectsOnline));
 
 
         return paymentForReportList;
