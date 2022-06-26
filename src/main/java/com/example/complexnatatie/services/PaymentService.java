@@ -8,10 +8,7 @@ import com.example.complexnatatie.controllers.handlers.exceptions.CustomExceptio
 import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
-import com.example.complexnatatie.dtos.ContractDTO;
-import com.example.complexnatatie.dtos.CustomerDTO;
-import com.example.complexnatatie.dtos.PaymentDTO;
-import com.example.complexnatatie.dtos.PaymentForReport;
+import com.example.complexnatatie.dtos.*;
 import com.example.complexnatatie.entities.PaymentCash;
 import com.example.complexnatatie.entities.PaymentOnline;
 import com.example.complexnatatie.entities.PaymentPos;
@@ -451,4 +448,20 @@ public class PaymentService {
 
 
     }
+
+    public List<PaymentMonthlyStatistic> getMonthStatisticForYear(int year) {
+        final List<PaymentMonthlyStatistic> paymentMonthlyStatisticList = new ArrayList<>();
+
+
+        final List<Object[]> statisticsCash = paymentCashRepository.getMonthStatisticForYear(year);
+        final List<Object[]> statisticsPos = paymentPosRepository.getMonthStatisticForYear(year);
+        final List<Object[]> statisticsOnline = paymentOnlineRepository.getMonthStatisticForYear(year);
+
+        paymentMonthlyStatisticList.addAll(PaymentBuilder.fromStatisticObjects(statisticsCash, PaymentType.CASH));
+        paymentMonthlyStatisticList.addAll(PaymentBuilder.fromStatisticObjects(statisticsPos, PaymentType.POS));
+        paymentMonthlyStatisticList.addAll(PaymentBuilder.fromStatisticObjects(statisticsOnline, PaymentType.ONLINE));
+
+        return paymentMonthlyStatisticList;
+    }
+
 }

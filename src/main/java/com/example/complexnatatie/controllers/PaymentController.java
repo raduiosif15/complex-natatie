@@ -4,6 +4,7 @@ import com.example.complexnatatie.controllers.handlers.request.PaymentRequest;
 import com.example.complexnatatie.controllers.handlers.request.SendEmailRequest;
 import com.example.complexnatatie.controllers.handlers.responses.PaymentResponse;
 import com.example.complexnatatie.dtos.PaymentForReport;
+import com.example.complexnatatie.dtos.PaymentMonthlyStatistic;
 import com.example.complexnatatie.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,12 @@ public class PaymentController {
     @PreAuthorize("hasRole('CASHIER') or hasRole('ADMIN')")
     public ResponseEntity<Object> sendEmailWithXlsx(@RequestBody SendEmailRequest reportRequest) {
         return new ResponseEntity<>(paymentService.sendEmailWithXlsx(reportRequest), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/statistic/{year}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<PaymentMonthlyStatistic>> getMonthStatisticForYear(@PathVariable int year) {
+        return new ResponseEntity<>(paymentService.getMonthStatisticForYear(year), HttpStatus.OK);
     }
 
 }

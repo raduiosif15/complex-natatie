@@ -21,10 +21,9 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     List<Contract> getAllByCustomerId(int customerId);
 
     @Query(nativeQuery = true,
-            value = "SELECT COUNT(*), customer_type, to_char(start_date,'Mon') AS mon, start_date " +
+            value = "SELECT COUNT(*), customer_type, to_char(start_date,'Mon') AS mon " +
                     "FROM contract " +
                     "WHERE extract(year FROM contract.start_date) = :year " +
-                    "GROUP BY customer_type, to_char(start_date,'Mon'), start_date " +
-                    "ORDER BY start_date ")
+                    "GROUP BY customer_type, to_char(start_date,'Mon') ")
     List<Object[]> getMonthStatisticForYear(int year);
 }
