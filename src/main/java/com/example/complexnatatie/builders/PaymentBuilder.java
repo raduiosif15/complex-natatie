@@ -23,7 +23,7 @@ public class PaymentBuilder {
         return PaymentDTO.builder()
                 .id(payment.getId())
                 .date(payment.getDate())
-                .value(payment.getValue())
+                .value(Double.parseDouble(df.format(payment.getValue())))
                 .type(new PaymentType(payment.getType()))
                 .description(payment.getDescription())
                 .customerId(payment.getCustomerId())

@@ -5,19 +5,22 @@ import com.example.complexnatatie.dtos.ContractDTO;
 import com.example.complexnatatie.entities.Contract;
 import lombok.NoArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class ContractBuilder {
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
     public static ContractDTO fromEntity(Contract contract) {
         return ContractDTO.builder()
                 .id(contract.getId())
                 .startDate(contract.getStartDate())
                 .endDate(contract.getEndDate())
-                .monthly(contract.getMonthly())
-                .total(contract.getTotal())
+                .monthly(Double.parseDouble(df.format(contract.getMonthly())))
+                .total(Double.parseDouble(df.format(contract.getTotal())))
                 .customerType(new CustomerType(contract.getCustomerType()))
                 .customerId(contract.getCustomerId())
                 .build();
@@ -37,8 +40,8 @@ public class ContractBuilder {
                 .id(contractDTO.getId())
                 .startDate(contractDTO.getStartDate())
                 .endDate(contractDTO.getEndDate())
-                .monthly(contractDTO.getMonthly())
-                .total(contractDTO.getTotal())
+                .monthly(Double.parseDouble(df.format(contractDTO.getMonthly())))
+                .total(Double.parseDouble(df.format(contractDTO.getTotal())))
                 .customerType(contractDTO.getCustomerType().getName())
                 .customerId(contractDTO.getCustomerId())
                 .build();

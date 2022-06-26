@@ -31,7 +31,7 @@ public class AuthController {
     // todo: uncomment this
     // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Integer> createOperator(@RequestBody OperatorDTO operatorDTO) {
-        return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.OK);
+        return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.CREATED);
     }
 
     @PostMapping("/customer")

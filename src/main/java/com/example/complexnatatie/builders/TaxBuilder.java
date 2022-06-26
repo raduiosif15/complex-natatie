@@ -1,21 +1,24 @@
 package com.example.complexnatatie.builders;
 
-import com.example.complexnatatie.dtos.TaxDTO;
 import com.example.complexnatatie.builders.helpers.CustomerType;
+import com.example.complexnatatie.dtos.TaxDTO;
 import com.example.complexnatatie.entities.Tax;
 import lombok.NoArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class TaxBuilder {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
     public static TaxDTO fromEntity(Tax tax) {
         return TaxDTO.builder()
                 .id(tax.getId())
                 .description(tax.getDescription())
                 .type(new CustomerType(tax.getType()))
-                .value(tax.getValue())
+                .value(Double.parseDouble(df.format(tax.getValue())))
                 .build();
     }
 
@@ -27,7 +30,7 @@ public class TaxBuilder {
         return Tax.builder()
                 .description(taxDTO.getDescription())
                 .type(taxDTO.getType().getName())
-                .value(taxDTO.getValue())
+                .value(Double.parseDouble(df.format(taxDTO.getValue())))
                 .build();
     }
 }
