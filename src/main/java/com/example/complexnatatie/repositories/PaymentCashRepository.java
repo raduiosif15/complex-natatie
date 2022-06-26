@@ -17,11 +17,12 @@ public interface PaymentCashRepository extends JpaRepository<PaymentCash, Intege
     List<Object[]> findByDate(Date startDate, Date endDate);
 
     @Query(nativeQuery = true,
-            value = "SELECT SUM(payment_cash.value), customer.type, to_char(date, 'Mon') AS mon " +
+            value = "SELECT SUM(payment_cash.value), customer.type, to_char(date, 'Mon') AS mon, extract(month from date) " +
                     "FROM payment_cash " +
                     "JOIN customer ON payment_cash.customer_id = customer.id " +
                     "WHERE extract(year FROM payment_cash.date) = 2022 " +
-                    "GROUP BY customer.type, to_char(date, 'Mon') ")
+                    "GROUP BY customer.type, to_char(date, 'Mon'), extract(month from date)" +
+                    "ORDER BY extract(month from date) ")
     List<Object[]> getMonthStatisticForYear(int year);
 
 }
