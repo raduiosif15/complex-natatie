@@ -21,7 +21,7 @@ public interface PaymentPosRepository extends JpaRepository<PaymentPos, Integer>
             value = "SELECT SUM(payment_pos.value), customer.type, to_char(date, 'Mon') AS mon, extract(month from date) " +
                     "FROM payment_pos " +
                     "JOIN customer ON payment_pos.customer_id = customer.id " +
-                    "WHERE extract(year FROM payment_pos.date) = 2022 " +
+                    "WHERE extract(year FROM payment_pos.date) = :year " +
                     "GROUP BY customer.type, to_char(date, 'Mon'), extract(month from date)" +
                     "ORDER BY extract(month from date) ")
     List<Object[]> getMonthStatisticForYear(int year);

@@ -21,7 +21,7 @@ public interface PaymentCashRepository extends JpaRepository<PaymentCash, Intege
             value = "SELECT SUM(payment_cash.value), customer.type, to_char(date, 'Mon') AS mon, extract(month from date) " +
                     "FROM payment_cash " +
                     "JOIN customer ON payment_cash.customer_id = customer.id " +
-                    "WHERE extract(year FROM payment_cash.date) = 2022 " +
+                    "WHERE extract(year FROM payment_cash.date) = :year " +
                     "GROUP BY customer.type, to_char(date, 'Mon'), extract(month from date)" +
                     "ORDER BY extract(month from date) ")
     List<Object[]> getMonthStatisticForYear(int year);
