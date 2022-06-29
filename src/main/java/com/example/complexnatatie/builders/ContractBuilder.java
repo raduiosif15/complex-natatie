@@ -1,11 +1,16 @@
 package com.example.complexnatatie.builders;
 
 import com.example.complexnatatie.builders.helpers.CustomerType;
+import com.example.complexnatatie.builders.helpers.PaymentType;
 import com.example.complexnatatie.dtos.ContractDTO;
+import com.example.complexnatatie.dtos.ContractMonthlyStatistic;
+import com.example.complexnatatie.dtos.PaymentMonthlyStatistic;
 import com.example.complexnatatie.entities.Contract;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,4 +51,19 @@ public class ContractBuilder {
                 .customerId(contractDTO.getCustomerId())
                 .build();
     }
+
+    public static List<ContractMonthlyStatistic> fromStatisticObjects(List<Object[]> statistics) {
+        final List<ContractMonthlyStatistic> contractMonthlyStatistics = new ArrayList<>();
+
+        for (Object[] statistic : statistics) {
+            final ContractMonthlyStatistic contractMonthlyStatistic = new ContractMonthlyStatistic();
+            contractMonthlyStatistic.setCount((BigInteger) statistic[0]);
+            contractMonthlyStatistic.setType(new CustomerType((String) statistic[1]));
+            contractMonthlyStatistic.setMonth((String) statistic[2]);
+            contractMonthlyStatistics.add(contractMonthlyStatistic);
+        }
+
+        return contractMonthlyStatistics;
+    }
+
 }

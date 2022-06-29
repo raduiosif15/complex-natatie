@@ -3,7 +3,6 @@ package com.example.complexnatatie.services;
 import com.example.complexnatatie.builders.ContractBuilder;
 import com.example.complexnatatie.builders.CustomerBuilder;
 import com.example.complexnatatie.builders.TaxBuilder;
-import com.example.complexnatatie.builders.helpers.CustomerType;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.responses.ContractValidityResponse;
 import com.example.complexnatatie.dtos.ContractDTO;
@@ -24,8 +23,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.math.BigInteger;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public record ContractService(ContractRepository contractRepository, CustomerRepository customerRepository,
@@ -125,21 +126,7 @@ public record ContractService(ContractRepository contractRepository, CustomerRep
     public List<ContractMonthlyStatistic> getMonthStatisticForYear(int year) {
         final List<Object[]> statistics = contractRepository.getMonthStatisticForYear(year);
 
-        final List<ContractMonthlyStatistic> contractMonthlyStatistics = new ArrayList<>();
-
-        for (Object[] statistic : statistics) {
-
-            final ContractMonthlyStatistic contractMonthlyStatistic = new ContractMonthlyStatistic();
-
-            contractMonthlyStatistic.setCount((BigInteger) statistic[0]);
-            contractMonthlyStatistic.setType(new CustomerType((String) statistic[1]));
-            contractMonthlyStatistic.setMonth((String) statistic[2]);
-
-            contractMonthlyStatistics.add(contractMonthlyStatistic);
-
-        }
-
-        return contractMonthlyStatistics;
+        return ContractBuilder.fromStatisticObjects(statistics);
     }
 
 }

@@ -1,12 +1,10 @@
 package com.example.complexnatatie.services;
 
 import com.example.complexnatatie.builders.CustomerBuilder;
-import com.example.complexnatatie.builders.OperatorBuilder;
 import com.example.complexnatatie.controllers.handlers.exceptions.CustomException;
 import com.example.complexnatatie.controllers.handlers.exceptions.ResourceNotFoundException;
 import com.example.complexnatatie.dtos.CustomerDTO;
 import com.example.complexnatatie.entities.Customer;
-import com.example.complexnatatie.entities.Operator;
 import com.example.complexnatatie.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +33,7 @@ public class CustomerService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Customer customer = customerRepository.getByUtcnId(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with utcn id: " + username));
 
         return CustomerBuilder.userDetailsBuilder(customer);
 
@@ -46,34 +44,22 @@ public class CustomerService implements UserDetailsService {
     }
 
     public List<CustomerDTO> getByNameOrCodeID(String name) {
-
         try {
-
             final long codeID = Long.parseLong(name);
             final List<CustomerDTO> list = new ArrayList<>();
-
             if (codeID == 0) {
                 return list;
             }
-
             final Optional<Customer> optionalCustomer = customerRepository.getByCodeID(codeID);
-
             if (optionalCustomer.isEmpty()) {
                 return list;
             }
-
             list.add(CustomerBuilder.fromEntity(optionalCustomer.get()));
-
             return list;
-
         } catch (NumberFormatException e) {
-
             final String newName = name.toLowerCase().replace("%20", " ");
-
             return CustomerBuilder.fromEntities(customerRepository.getByName(newName));
-
         }
-
     }
 
     public CustomerDTO save(CustomerDTO customerDTO) {

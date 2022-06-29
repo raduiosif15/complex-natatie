@@ -66,11 +66,8 @@ public record AuthService(AuthenticationManager authenticationManager,
 
     public JwtCustomerResponse authCustomer(LoginRequest loginRequest) {
 
-        System.out.println("authentication: " + loginRequest.toString());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUtcnId(), loginRequest.getPassword()));
-
-        System.out.println("authentication: " + authentication.toString());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
