@@ -134,10 +134,13 @@ public record UtilService(ServletContext servletContext) {
             // bodyPart
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
             mimeBodyPart.setContent(messageText, "text/html; charset=utf-8");
-            mimeBodyPart.attachFile(new File(pathToFile));
+
+            MimeBodyPart attachment = new MimeBodyPart();
+            attachment.attachFile(new File(pathToFile));
 
             // add bodyPart to multipart
             multipart.addBodyPart(mimeBodyPart);
+            multipart.addBodyPart(attachment);
 
             // add multipart to message
             message.setContent(multipart);
