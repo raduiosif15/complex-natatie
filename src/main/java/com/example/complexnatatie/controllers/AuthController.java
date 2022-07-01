@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Integer> createOperator(@RequestBody OperatorDTO operatorDTO) {
+    public ResponseEntity<Integer> createOperator(@Valid  @RequestBody OperatorDTO operatorDTO) {
         return new ResponseEntity<>(authService.createOperator(operatorDTO), HttpStatus.CREATED);
     }
 
@@ -41,7 +42,7 @@ public class AuthController {
 
     @PostMapping("/registerCustomer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerCreateDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerCreateDTO customerDTO) {
         return new ResponseEntity<>(authService.createCustomer(customerDTO), HttpStatus.CREATED);
     }
 

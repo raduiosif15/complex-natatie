@@ -63,4 +63,9 @@ public class Customer {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<PaymentCash> paymentCashList;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<PaymentOnline> paymentOnlineList;
+
 }
